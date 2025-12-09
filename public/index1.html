@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MLM Grow Landing</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.bundle.js"></script>
+  <script type="text/javascript" src="js/bootstrap.esm.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/js/all.min.js"></script>
+</head>
+
+<body>
+
+
+
+
+ 
+
+  
+
+
+
+
+  <script src="js/slick.js"></script>
+  <link rel="stylesheet" href="css/slick.css">
+
+  <script>
+    (function () {
+      const accordion = document.getElementById('faq');
+      const items = accordion.querySelectorAll('.item');
+
+      function closeAll() {
+        items.forEach(it => {
+          it.classList.remove('open');
+          const btn = it.querySelector('.summary');
+          if (btn) btn.setAttribute('aria-expanded', 'false');
+        });
+      }
+      function openItem(item) {
+        item.classList.add('open');
+        const btn = item.querySelector('.summary');
+        if (btn) btn.setAttribute('aria-expanded', 'true');
+      }
+      accordion.addEventListener('click', function (e) {
+        const summary = e.target.closest('.summary');
+        if (!summary) return;
+        const item = summary.closest('.item');
+        if (item.classList.contains('open')) {
+          item.classList.remove('open');
+          summary.setAttribute('aria-expanded', 'false');
+        } else {
+          closeAll();
+          openItem(item);
+        }
+      });
+      accordion.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          const summary = e.target.closest('.summary');
+          if (!summary) return;
+          e.preventDefault();
+          summary.click();
+        }
+      });
+      document.addEventListener('DOMContentLoaded', function () {
+        const firstOpen = accordion.querySelector('.item.open');
+        if (firstOpen) {
+          firstOpen.querySelector('.summary').setAttribute('aria-expanded', 'true');
+        }
+      });
+    })();
+  </script>
+
+
+
+</body>
+
+</html>

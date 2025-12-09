@@ -1,0 +1,1762 @@
+# Chat Conversation
+
+Note: _This is purely the output of the chat conversation and does not contain any raw data, codebase snippets, etc. used to generate the output._
+
+### User Input
+
+Just a simple qestion are you to access the all the files in my MLMR folder?
+
+*Listed directory [MLMR](file:///c:/Users/lenovo/Desktop/MLMR) *
+
+### Planner Response
+
+Yes, I have access to all the files in your `MLMR` folder.
+
+I can currently see the following files and directories in `c:\Users\lenovo\Desktop\MLMR`:
+- `Backend/`
+- `node_modules/`
+- `public/`
+- `src/`
+- `index.html`
+- `vite.config.js`
+- `package.json`
+- and others...
+
+Let me know if there's anything specific you'd like me to help you with!
+
+### User Input
+
+@[src/store/signUpData.js] @[src/components/SignUpPannel.jsx] @[src/components/LoginSignUpPanel.jsx] @[src/store/authStore.js] @[src/libs/api.js] @[Backend/MLM/config/auth.js] @[src/components/AuthRequired.jsx] @[src/components/LoginPanel.jsx] @[src/components/Header.jsx] 
+
+For now i have factored some changes, I think it will all work well now I got some problem here this was the last thing i setted up async function signUp(payload) { try { console.log("Signup payload:", payload); const res = await registerApi(payload); if (res?.data?.success === true) { setSignUpData({ email: res.data.user.email, phone: res.data.user.phone, userId: res.data.user.id, source: 'signup' }); } else { alert("Signup failed. Please try again."); } } catch (error) { if(error.response.data.error === "User already exists"){ alert("User already exists. Please login."); closeAllBootstrapModals(); return; }; console.error("Signup error:", error); } } 
+Now i want to work more on API response handling. I want to professionally refactor this. You think this could be handled better. Tell from both perspectives first in - component ones--- give me explaination examples how you handle multile responses here, so your frontend does not break in case, covering all aspects like that in production grade. Second we talk api on global level -- for now its a simple setup, You need to teach me how production grade API is setup okay? Do consider production grade for the approach for detailed answer. Do take your time but give me a well-searched answer. Think deeply. Just give me code snippits on the chat no need to factor any changes in my files its strictly forbidden.
+Note:- I have attached all the relevant files for reference for my project.
+
+### Planner Response
+
+Let me first review your current setup to understand your architecture, then provide you with a comprehensive guide.
+
+*Viewed [api.js](file:///c:/Users/lenovo/Desktop/MLMR/src/libs/api.js) *
+
+*Viewed [authStore.js](file:///c:/Users/lenovo/Desktop/MLMR/src/store/authStore.js) *
+
+*Viewed [SignUpPannel.jsx](file:///c:/Users/lenovo/Desktop/MLMR/src/components/SignUpPannel.jsx) *
+
+*Viewed [LoginPanel.jsx](file:///c:/Users/lenovo/Desktop/MLMR/src/components/LoginPanel.jsx) *
+
+*Viewed [auth.js](file:///c:/Users/lenovo/Desktop/MLMR/Backend/MLM/config/auth.js) *
+
+### Planner Response
+
+Let me also check your `authApi.js` to see the complete picture:
+
+*Searched filesystem*
+
+*Viewed [authApi.js](file:///c:/Users/lenovo/Desktop/MLMR/src/libs/authApi.js) *
+
+### Planner Response
+
+Now I have a complete picture of your setup. Let me give you a comprehensive, production-grade guide on API response handling.
+
+---
+
+# 🚀 Production-Grade API Response Handling Guide
+
+## Your Current Setup Analysis
+
+Your current code has these issues:
+1. **No defensive coding** - `error.response.data.error` will crash if `error.response` is undefined (network failure, timeout, etc.)
+2. **Using `alert()`** - Not user-friendly, blocks UI
+3. **No loading states** - User doesn't know if request is in progress
+4. **No retry logic** - One failure = dead end
+5. **Inconsistent error handling** - Each component handles errors differently
+
+---
+
+# PART 1: Component-Level Response Handling
+
+## 1.1 The Problem with Your Current Code
+
+```javascript
+// ❌ DANGEROUS - Will crash on network errors
+catch (error) {
+  if(error.response.data.error === "User already exists"){  // 💥 CRASH if no network!
+    alert("User already exists. Please login.");
+    closeAllBootstrapModals();
+    return;
+  };
+  console.error("Signup error:", error);
+}
+```
+
+**Why this breaks:**
+- `error.response` is `undefined` when there's no network
+- `error.response.data` might not have an `error` field
+- Using `alert()` is terrible UX
+
+---
+
+## 1.2 Production-Grade Error Extraction Utility
+
+Create a utility to safely extract errors:
+
+```javascript
+// src/utils/errorUtils.js
+
+/**
+ * Safely extracts error message from various error formats
+ * Handles: Axios errors, network failures, unknown structures
+ */
+export function getErrorMessage(error, defaultMessage = "Something went wrong. Please try again.") {
+  // 1. Network/Timeout errors (no response from server)
+  if (!error.response) {
+    if (error.code === 'ECONNABORTED') {
+      return "Request timed out. Please check your connection.";
+    }
+    if (error.message === 'Network Error') {
+      return "Unable to connect to server. Please check your internet.";
+    }
+    return error.message || defaultMessage;
+  }
+
+  // 2. Server responded with error
+  const { data, status } = error.response;
+
+  // Handle different API response formats your backend might return
+  const serverMessage = 
+    data?.error ||           // { error: "User already exists" }
+    data?.message ||         // { message: "Invalid credentials" }  
+    data?.errors?.[0]?.msg || // Express-validator: { errors: [{ msg: "..." }] }
+    data?.errors?.[0] ||     // Array of strings: { errors: ["Error 1"] }
+    null;
+
+  if (serverMessage) return serverMessage;
+
+  // 3. Fallback to HTTP status messages
+  const statusMessages = {
+    400: "Invalid request. Please check your input.",
+    401: "Session expired. Please login again.",
+    403: "You don't have permission to do this.",
+    404: "Resource not found.",
+    409: "This resource already exists.",
+    422: "Validation error. Please check your input.",
+    429: "Too many requests. Please slow down.",
+    500: "Server error. Please try again later.",
+    502: "Server temporarily unavailable.",
+    503: "Service unavailable. Please try later.",
+  };
+
+  return statusMessages[status] || defaultMessage;
+}
+
+/**
+ * Checks if the error is a specific known error type
+ */
+export function isErrorType(error, errorCodes) {
+  if (!Array.isArray(errorCodes)) errorCodes = [errorCodes];
+  
+  const errorMessage = error?.response?.data?.error || 
+                       error?.response?.data?.message || 
+                       error?.response?.data?.code || '';
+  
+  return errorCodes.some(code => 
+    errorMessage.toLowerCase().includes(code.toLowerCase())
+  );
+}
+
+/**
+ * Get HTTP status safely
+ */
+export function getStatusCode(error) {
+  return error?.response?.status || null;
+}
+```
+
+---
+
+## 1.3 Production-Grade Sign Up Handler
+
+```javascript
+// src/components/SignUpPanel.jsx
+import { useState } from "react";
+import { getErrorMessage, isErrorType, getStatusCode } from "../utils/errorUtils";
+
+export function SignUpPanel() {
+  const { setSignUpData } = useSignUpStore();
+  
+  // 🔥 NEW: Loading and error states
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formError, setFormError] = useState(null);
+  const [formSuccess, setFormSuccess] = useState(null);
+
+  async function signUp(payload) {
+    // Clear previous messages
+    setFormError(null);
+    setFormSuccess(null);
+    setIsSubmitting(true);
+
+    try {
+      console.log("Signup payload:", payload);
+      const res = await registerApi(payload);
+
+      // ✅ SUCCESS CASE: Happy path
+      if (res?.data?.success === true && res?.data?.user) {
+        setSignUpData({
+          email: res.data.user.email || null,
+          phone: res.data.user.phone || null,
+          userId: res.data.user.id,
+          source: 'signup'
+        });
+        setFormSuccess("Account created! Please verify your email/phone.");
+        // OTP modal will auto-open from your store subscription
+        return;
+      }
+
+      // ⚠️ EDGE CASE: API returned 200 but with success: false
+      if (res?.data?.success === false) {
+        setFormError(res.data.message || res.data.error || "Signup failed. Please try again.");
+        return;
+      }
+
+      // ⚠️ EDGE CASE: Unexpected response structure
+      console.warn("Unexpected response structure:", res);
+      setFormError("Unexpected response from server. Please try again.");
+
+    } catch (error) {
+      console.error("Signup error:", error);
+
+      // 🔥 HANDLE SPECIFIC ERRORS
+      const status = getStatusCode(error);
+
+      // Case 1: User already exists (409 Conflict or specific error message)
+      if (status === 409 || isErrorType(error, ['already exists', 'duplicate'])) {
+        setFormError("This account already exists. Please login instead.");
+        // Optionally: auto-switch to login tab
+        // closeAllBootstrapModals();
+        return;
+      }
+
+      // Case 2: Validation errors from server
+      if (status === 422 || status === 400) {
+        const validationErrors = error?.response?.data?.errors;
+        if (Array.isArray(validationErrors)) {
+          // Map field-level errors to form
+          setFormError(validationErrors.map(e => e.msg || e.message).join('. '));
+        } else {
+          setFormError(getErrorMessage(error, "Invalid input. Please check your details."));
+        }
+        return;
+      }
+
+      // Case 3: Rate limited
+      if (status === 429) {
+        setFormError("Too many attempts. Please wait a moment and try again.");
+        return;
+      }
+
+      // Case 4: Server error
+      if (status >= 500) {
+        setFormError("Our servers are having issues. Please try again in a few minutes.");
+        return;
+      }
+
+      // Case 5: Network error (no internet)
+      if (!error.response) {
+        setFormError("Connection failed. Please check your internet and try again.");
+        return;
+      }
+
+      // Default fallback
+      setFormError(getErrorMessage(error));
+
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  return (
+    <div>
+      {/* 🔥 SHOW FORM-LEVEL ERROR */}
+      {formError && (
+        <div className="alert alert-danger d-flex align-items-center" role="alert">
+          <i className="bi bi-exclamation-triangle-fill me-2"></i>
+          <span>{formError}</span>
+          <button 
+            type="button" 
+            className="btn-close ms-auto" 
+            onClick={() => setFormError(null)}
+          />
+        </div>
+      )}
+
+      {/* 🔥 SHOW SUCCESS MESSAGE */}
+      {formSuccess && (
+        <div className="alert alert-success" role="alert">
+          {formSuccess}
+        </div>
+      )}
+
+      <form onSubmit={handleMobileSubmit(signUp)}>
+        {/* ... your form fields ... */}
+
+        {/* 🔥 SMART SUBMIT BUTTON */}
+        <button 
+          type="submit" 
+          className="btn btn-login w-100"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <>
+              <span className="spinner-border spinner-border-sm me-2" role="status" />
+              Signing up...
+            </>
+          ) : (
+            'Sign Up'
+          )}
+        </button>
+      </form>
+    </div>
+  );
+}
+```
+
+---
+
+## 1.4 Custom Hook for Form API Calls (Reusable Pattern)
+
+```javascript
+// src/hooks/useApiMutation.js
+import { useState, useCallback } from 'react';
+import { getErrorMessage, getStatusCode } from '../utils/errorUtils';
+
+/**
+ * Production-grade hook for API mutations (POST, PUT, DELETE)
+ * Handles loading, error, success states automatically
+ */
+export function useApiMutation(apiFunction, options = {}) {
+  const {
+    onSuccess,
+    onError,
+    successMessage = null,
+    transformError = null, // Custom error transformer
+  } = options;
+
+  const [state, setState] = useState({
+    isLoading: false,
+    error: null,
+    success: null,
+    data: null,
+  });
+
+  const reset = useCallback(() => {
+    setState({ isLoading: false, error: null, success: null, data: null });
+  }, []);
+
+  const mutate = useCallback(async (payload) => {
+    setState(prev => ({ ...prev, isLoading: true, error: null, success: null }));
+
+    try {
+      const response = await apiFunction(payload);
+      
+      // Check for soft failures (200 with success: false)
+      if (response?.data?.success === false) {
+        throw new Error(response.data.message || response.data.error || 'Operation failed');
+      }
+
+      setState({
+        isLoading: false,
+        error: null,
+        success: successMessage || response?.data?.message || 'Success!',
+        data: response?.data,
+      });
+
+      onSuccess?.(response.data, payload);
+      return { success: true, data: response.data };
+
+    } catch (error) {
+      const errorMessage = transformError 
+        ? transformError(error) 
+        : getErrorMessage(error);
+
+      setState({
+        isLoading: false,
+        error: errorMessage,
+        success: null,
+        data: null,
+      });
+
+      onError?.(error, payload);
+      return { success: false, error: errorMessage, status: getStatusCode(error) };
+    }
+  }, [apiFunction, onSuccess, onError, successMessage, transformError]);
+
+  return {
+    ...state,
+    mutate,
+    reset,
+  };
+}
+```
+
+**Usage in component:**
+
+```javascript
+function SignUpPanel() {
+  const { setSignUpData } = useSignUpStore();
+
+  // 🔥 Clean and declarative
+  const signup = useApiMutation(registerApi, {
+    onSuccess: (data) => {
+      setSignUpData({
+        email: data.user.email,
+        phone: data.user.phone,
+        userId: data.user.id,
+        source: 'signup'
+      });
+    },
+    transformError: (error) => {
+      if (getStatusCode(error) === 409) {
+        return "Account already exists. Please login instead.";
+      }
+      return getErrorMessage(error);
+    }
+  });
+
+  async function handleSignUp(payload) {
+    const result = await signup.mutate(payload);
+    if (result.success) {
+      // Handle success - OTP modal opens automatically
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit(handleSignUp)}>
+      {signup.error && <Alert variant="danger">{signup.error}</Alert>}
+      {signup.success && <Alert variant="success">{signup.success}</Alert>}
+      
+      {/* ... fields ... */}
+      
+      <button disabled={signup.isLoading}>
+        {signup.isLoading ? 'Processing...' : 'Sign Up'}
+      </button>
+    </form>
+  );
+}
+```
+
+---
+
+## 1.5 Toast Notifications Instead of Alerts
+
+For a cleaner UX, use a toast system. Here's a simple implementation:
+
+```javascript
+// src/store/toastStore.js
+import { create } from 'zustand';
+
+export const useToastStore = create((set, get) => ({
+  toasts: [],
+  
+  addToast: (toast) => {
+    const id = Date.now();
+    const newToast = {
+      id,
+      type: 'info', // 'success' | 'error' | 'warning' | 'info'
+      duration: 5000,
+      ...toast,
+    };
+    
+    set(state => ({ toasts: [...state.toasts, newToast] }));
+    
+    // Auto-remove after duration
+    if (newToast.duration > 0) {
+      setTimeout(() => {
+        get().removeToast(id);
+      }, newToast.duration);
+    }
+  },
+  
+  removeToast: (id) => {
+    set(state => ({ toasts: state.toasts.filter(t => t.id !== id) }));
+  },
+  
+  // Convenience methods
+  success: (message, options) => get().addToast({ type: 'success', message, ...options }),
+  error: (message, options) => get().addToast({ type: 'error', message, duration: 7000, ...options }),
+  warning: (message, options) => get().addToast({ type: 'warning', message, ...options }),
+  info: (message, options) => get().addToast({ type: 'info', message, ...options }),
+}));
+
+// Hook for easy use
+export const useToast = () => {
+  const { success, error, warning, info } = useToastStore();
+  return { success, error, warning, info };
+};
+```
+
+**Toast Container Component:**
+
+```javascript
+// src/components/ToastContainer.jsx
+import { useToastStore } from '../store/toastStore';
+
+const TOAST_STYLES = {
+  success: { bg: 'bg-success', icon: 'bi-check-circle-fill' },
+  error: { bg: 'bg-danger', icon: 'bi-x-circle-fill' },
+  warning: { bg: 'bg-warning text-dark', icon: 'bi-exclamation-triangle-fill' },
+  info: { bg: 'bg-info', icon: 'bi-info-circle-fill' },
+};
+
+export function ToastContainer() {
+  const { toasts, removeToast } = useToastStore();
+
+  return (
+    <div className="toast-container position-fixed top-0 end-0 p-3" style={{ zIndex: 9999 }}>
+      {toasts.map(toast => {
+        const style = TOAST_STYLES[toast.type] || TOAST_STYLES.info;
+        return (
+          <div 
+            key={toast.id} 
+            className={`toast show ${style.bg} text-white`}
+            role="alert"
+          >
+            <div className="toast-body d-flex align-items-center">
+              <i className={`bi ${style.icon} me-2`}></i>
+              <span className="flex-grow-1">{toast.message}</span>
+              <button 
+                type="button" 
+                className="btn-close btn-close-white ms-2"
+                onClick={() => removeToast(toast.id)}
+              />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+```
+
+**Using in signup:**
+
+```javascript
+import { useToast } from '../store/toastStore';
+
+function SignUpPanel() {
+  const toast = useToast();
+
+  async function signUp(payload) {
+    try {
+      const res = await registerApi(payload);
+      if (res?.data?.success) {
+        toast.success("Account created! Check your email for verification.");
+        // ...
+      }
+    } catch (error) {
+      if (isErrorType(error, 'already exists')) {
+        toast.error("Account already exists. Please login instead.");
+        return;
+      }
+      toast.error(getErrorMessage(error));
+    }
+  }
+}
+```
+
+---
+
+# PART 2: Global API Layer (Production-Grade)
+
+## 2.1 Enhanced API Instance with Full Features
+
+```javascript
+// src/libs/api.js
+import axios from "axios";
+
+// Environment-based config
+const config = {
+  baseURL: import.meta.env.VITE_API_URL || 'http://192.168.1.9:3750',
+  timeout: 30000, // 30 seconds
+  retryAttempts: 3,
+  retryDelay: 1000, // 1 second
+  retryStatusCodes: [408, 500, 502, 503, 504], // Retry on these status codes
+};
+
+const api = axios.create({
+  baseURL: config.baseURL,
+  timeout: config.timeout,
+  headers: {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+  },
+});
+
+// =============================================
+// REQUEST INTERCEPTOR
+// =============================================
+api.interceptors.request.use(
+  (requestConfig) => {
+    // 1. Attach auth token
+    const token = localStorage.getItem("token");
+    if (token) {
+      requestConfig.headers.Authorization = `Bearer ${token}`;
+    }
+
+    // 2. Add request ID for debugging/logging
+    requestConfig.headers['X-Request-ID'] = crypto.randomUUID();
+
+    // 3. Add timestamp for debugging
+    requestConfig.metadata = { startTime: Date.now() };
+
+    // 4. Log in development
+    if (import.meta.env.DEV) {
+      console.log(`🚀 [API Request] ${requestConfig.method?.toUpperCase()} ${requestConfig.url}`, {
+        data: requestConfig.data,
+        params: requestConfig.params,
+      });
+    }
+
+    return requestConfig;
+  },
+  (error) => {
+    console.error('Request interceptor error:', error);
+    return Promise.reject(error);
+  }
+);
+
+// =============================================
+// RESPONSE INTERCEPTOR
+// =============================================
+api.interceptors.response.use(
+  // SUCCESS HANDLER
+  (response) => {
+    // Log response time in development
+    if (import.meta.env.DEV) {
+      const duration = Date.now() - response.config.metadata?.startTime;
+      console.log(`✅ [API Response] ${response.config.url} (${duration}ms)`, response.data);
+    }
+    return response;
+  },
+
+  // ERROR HANDLER
+  async (error) => {
+    const originalRequest = error.config;
+
+    // Log error in development
+    if (import.meta.env.DEV) {
+      const duration = Date.now() - originalRequest?.metadata?.startTime;
+      console.error(`❌ [API Error] ${originalRequest?.url} (${duration}ms)`, {
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message,
+      });
+    }
+
+    // ----- HANDLE 401: Token Expired -----
+    if (error.response?.status === 401) {
+      // Check if we should try to refresh token
+      const refreshToken = localStorage.getItem("refreshToken");
+      
+      if (refreshToken && !originalRequest._retry) {
+        originalRequest._retry = true;
+        
+        try {
+          const refreshResponse = await axios.post(
+            `${config.baseURL}/api/user/refresh-token`,
+            { refreshToken }
+          );
+          
+          const newToken = refreshResponse.data.token;
+          localStorage.setItem("token", newToken);
+          
+          // Retry original request with new token
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+          return api(originalRequest);
+          
+        } catch (refreshError) {
+          // Refresh failed - full logout
+          localStorage.removeItem("token");
+          localStorage.removeItem("refreshToken");
+          
+          // Dispatch logout event (components can listen)
+          window.dispatchEvent(new CustomEvent('auth:logout', { 
+            detail: { reason: 'session_expired' } 
+          }));
+          
+          // Don't redirect here - let components handle it
+          return Promise.reject(error);
+        }
+      }
+      
+      // No refresh token - just logout
+      localStorage.removeItem("token");
+      window.dispatchEvent(new CustomEvent('auth:logout', { 
+        detail: { reason: 'unauthorized' } 
+      }));
+    }
+
+    // ----- HANDLE RETRY LOGIC -----
+    const shouldRetry = (
+      config.retryStatusCodes.includes(error.response?.status) ||
+      error.code === 'ECONNABORTED' ||  // Timeout
+      !error.response  // Network error
+    );
+
+    if (shouldRetry && (originalRequest._retryCount || 0) < config.retryAttempts) {
+      originalRequest._retryCount = (originalRequest._retryCount || 0) + 1;
+      
+      // Exponential backoff: 1s, 2s, 4s...
+      const delay = config.retryDelay * Math.pow(2, originalRequest._retryCount - 1);
+      
+      console.log(`🔄 Retrying request (${originalRequest._retryCount}/${config.retryAttempts}) in ${delay}ms...`);
+      
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return api(originalRequest);
+    }
+
+    return Promise.reject(error);
+  }
+);
+
+export default api;
+```
+
+---
+
+## 2.2 Typed API Service Layer
+
+Create domain-specific API services for better organization:
+
+```javascript
+// src/libs/services/authService.js
+import api from '../api';
+
+/**
+ * Authentication Service
+ * Handles all auth-related API calls with standardized responses
+ */
+export const authService = {
+  /**
+   * Register a new user
+   * @param {Object} payload - { email?, phone?, username, password, referralCode? }
+   * @returns {Promise<{ success: boolean, user?: Object, error?: string }>}
+   */
+  async register(payload) {
+    const response = await api.post('/api/user/register', payload);
+    return response.data;
+  },
+
+  /**
+   * Login user
+   * @param {Object} payload - { email | phone, password }
+   * @returns {Promise<{ success: boolean, token?: string, user?: Object, requiresVerification?: boolean }>}
+   */
+  async login(payload) {
+    const response = await api.post('/api/user/login', payload);
+    return response.data;
+  },
+
+  /**
+   * Verify OTP
+   * @param {Object} payload - { userId, otp }
+   */
+  async verifyOtp(payload) {
+    const response = await api.post('/api/user/verify-otp', payload);
+    return response.data;
+  },
+
+  /**
+   * Resend OTP
+   * @param {Object} payload - { userId, type: 'email' | 'phone' }
+   */
+  async resendOtp(payload) {
+    const response = await api.post('/api/user/resend-otp', payload);
+    return response.data;
+  },
+
+  /**
+   * Refresh access token
+   * @param {string} refreshToken
+   */
+  async refreshToken(refreshToken) {
+    const response = await api.post('/api/user/refresh-token', { refreshToken });
+    return response.data;
+  },
+
+  /**
+   * Logout (invalidate refresh token on server)
+   */
+  async logout() {
+    try {
+      await api.post('/api/user/logout');
+    } finally {
+      localStorage.removeItem('token');
+      localStorage.removeItem('refreshToken');
+    }
+  },
+
+  /**
+   * Get current user profile
+   */
+  async getProfile() {
+    const response = await api.get('/api/user/profile');
+    return response.data;
+  },
+
+  /**
+   * Request password reset
+   * @param {Object} payload - { email | phone }
+   */
+  async forgotPassword(payload) {
+    const response = await api.post('/api/user/forgot-password', payload);
+    return response.data;
+  },
+
+  /**
+   * Reset password with token
+   * @param {Object} payload - { token, newPassword }
+   */
+  async resetPassword(payload) {
+    const response = await api.post('/api/user/reset-password', payload);
+    return response.data;
+  },
+};
+```
+
+---
+
+## 2.3 Global Error Boundary for API Errors
+
+```javascript
+// src/components/ApiErrorBoundary.jsx
+import React from 'react';
+
+class ApiErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    // Log to error reporting service (Sentry, LogRocket, etc.)
+    console.error('Uncaught error:', error, errorInfo);
+    
+    // In production, send to error tracking
+    // errorReportingService.captureException(error, { extra: errorInfo });
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="container text-center py-5">
+          <div className="alert alert-danger">
+            <h4>Something went wrong</h4>
+            <p>We're sorry, but something unexpected happened.</p>
+            <button 
+              className="btn btn-primary"
+              onClick={() => {
+                this.setState({ hasError: false, error: null });
+                window.location.reload();
+              }}
+            >
+              Reload Page
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
+export default ApiErrorBoundary;
+```
+
+---
+
+## 2.4 Auth Event Listener (Handle Global Logout)
+
+```javascript
+// src/hooks/useAuthEvents.js
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import useAuthStore from '../store/authStore';
+import { useToast } from '../store/toastStore';
+
+/**
+ * Hook to handle global auth events
+ * Place this in your App.jsx or a top-level component
+ */
+export function useAuthEvents() {
+  const navigate = useNavigate();
+  const { logout } = useAuthStore();
+  const toast = useToast();
+
+  useEffect(() => {
+    const handleLogout = (event) => {
+      const { reason } = event.detail || {};
+      
+      logout();
+      
+      switch (reason) {
+        case 'session_expired':
+          toast.warning('Your session has expired. Please login again.');
+          break;
+        case 'unauthorized':
+          toast.error('Please login to continue.');
+          break;
+        default:
+          break;
+      }
+      
+      navigate('/login');
+    };
+
+    window.addEventListener('auth:logout', handleLogout);
+    
+    return () => {
+      window.removeEventListener('auth:logout', handleLogout);
+    };
+  }, [logout, navigate, toast]);
+}
+```
+
+---
+
+## 2.5 Standardized API Response Types (Backend Contract)
+
+Define what your backend should return for consistency:
+
+```javascript
+// This is a "contract" document - share with backend team
+
+/**
+ * STANDARD API RESPONSE FORMATS
+ * 
+ * SUCCESS (2xx):
+ * {
+ *   "success": true,
+ *   "data": { ... },           // The actual payload
+ *   "message": "Optional success message"
+ * }
+ * 
+ * ERROR (4xx, 5xx):
+ * {
+ *   "success": false,
+ *   "error": "Human readable error message",
+ *   "code": "ERROR_CODE",      // Machine-readable code for frontend logic
+ *   "errors": [                // For validation errors
+ *     { "field": "email", "message": "Invalid email format" }
+ *   ]
+ * }
+ * 
+ * ERROR CODES:
+ * - USER_EXISTS        -> 409
+ * - INVALID_CREDENTIALS -> 401
+ * - VALIDATION_ERROR    -> 422
+ * - NOT_FOUND          -> 404
+ * - RATE_LIMITED       -> 429
+ * - SERVER_ERROR       -> 500
+ */
+```
+
+---
+
+## 2.6 Complete API Flow Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                        PRODUCTION API FLOW                                   │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│   COMPONENT                    API LAYER                      BACKEND       │
+│                                                                              │
+│   ┌──────────┐                                                              │
+│   │ SignUp   │                                                              │
+│   │ Panel    │                                                              │
+│   └────┬─────┘                                                              │
+│        │                                                                     │
+│        ▼                                                                     │
+│   ┌──────────────┐     ┌─────────────────┐                                  │
+│   │ useApiMutation│────▶│ authService     │                                  │
+│   │   Hook       │     │  .register()    │                                  │
+│   └──────────────┘     └────────┬────────┘                                  │
+│        │                        │                                            │
+│        │                        ▼                                            │
+│        │               ┌─────────────────┐                                  │
+│        │               │  Request        │                                  │
+│        │               │  Interceptor    │                                  │
+│        │               │  - Add token    │                                  │
+│        │               │  - Add headers  │                                  │
+│        │               │  - Log request  │                                  │
+│        │               └────────┬────────┘                                  │
+│        │                        │                                            │
+│        │                        ├──────────────────────▶  [SERVER]          │
+│        │                        │                              │             │
+│        │                        │◀─────────────────────────────┘             │
+│        │                        │                                            │
+│        │               ┌────────▼────────┐                                  │
+│        │               │  Response       │                                  │
+│        │               │  Interceptor    │                                  │
+│        │               │  - Handle 401   │                                  │
+│        │               │  - Auto retry   │                                  │
+│        │               │  - Refresh token│                                  │
+│        │               └────────┬────────┘                                  │
+│        │                        │                                            │
+│        ▼                        ▼                                            │
+│   ┌──────────────┐     ┌─────────────────┐                                  │
+│   │ State Update │◀────│ getErrorMessage │                                  │
+│   │ - loading    │     │ (error utility) │                                  │
+│   │ - error      │     └─────────────────┘                                  │
+│   │ - success    │                                                          │
+│   └──────────────┘                                                          │
+│        │                                                                     │
+│        ▼                                                                     │
+│   ┌──────────────┐                                                          │
+│   │ UI Update    │                                                          │
+│   │ - Toast      │                                                          │
+│   │ - Navigate   │                                                          │
+│   │ - Form state │                                                          │
+│   └──────────────┘                                                          │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+# Summary Checklist for Production-Grade API Handling
+
+| Category | What to Implement |
+|----------|-------------------|
+| **Error Extraction** | Safe error message extraction utility (`getErrorMessage`) |
+| **Loading States** | Show spinners, disable buttons during requests |
+| **Form-Level Errors** | Display errors above/below forms, not `alert()` |
+| **Toast System** | Global notifications for success/error/warning |
+| **Request Interceptor** | Auto-attach token, log requests, add request ID |
+| **Response Interceptor** | Handle 401, auto-retry, token refresh |
+| **Retry Logic** | Exponential backoff for network failures |
+| **Event System** | Global auth events for coordinated logout |
+| **Type Safety** | Standardized response formats |
+| **Error Boundaries** | Catch uncaught errors gracefully |
+
+---
+
+This should give you a comprehensive understanding of production-grade API handling from both the component level and global API layer. Let me know if you want me to dive deeper into any specific aspect!
+
+*Edited relevant file*
+
+### User Input
+
+@[src/untitled.txt] I have attached 2 different reponses to the same prompt. What do you think ?
+
+Your thoughts on switch case approach approach by gemini 
+
+Search web for better approach more repos and how APIs are handled proffesionally.
+
+Not just production level i want it to be how its been done, now i have enough of normal project i want to handle API's well. Okay then lets get on it.
+
+
+Just give me code snippits on the chat no need to factor any changes in my files its strictly forbidden.
+
+
+### Planner Response
+
+Let me search for how professional teams and open-source projects handle API responses in production.
+
+*Searched web for production React API error handling best practices axios interceptor pattern*
+
+*Searched web for how do large companies handle API errors React frontend Netflix Airbnb Stripe*
+
+*Searched web for react-query tanstack query error handling production patterns*
+
+*Searched web for axios error handling switch case vs object map pattern JavaScript*
+
+### Planner Response
+
+Now let me search for some specific real-world open-source implementations:
+
+*Searched web for GitHub open source React API error handling architecture real world examples*
+
+*Searched web for custom error classes JavaScript API handling AppError HttpError pattern*
+
+### Planner Response
+
+Excellent! Now I have comprehensive research. Let me give you a deep-dive analysis.
+
+---
+
+# 🔬 Deep Analysis: Switch Case vs Object Map & Professional API Handling
+
+## My Analysis of the Two Responses You Got
+
+### **Gemini's Response (Switch Case Approach)**
+
+| Aspect | Assessment |
+|--------|------------|
+| **Correctness** | ✅ Good - Covers status codes properly |
+| **Maintainability** | ⚠️ Moderate - Switch cases can get long |
+| **Scalability** | ❌ Poor - Adding new error cases requires modifying the function |
+| **Industry Standard** | ⚠️ Common in tutorials, less common in production |
+
+**Problems with Gemini's switch case:**
+```javascript
+// ❌ Gemini's approach
+switch (status) {
+  case 400:
+    alert(data.message || "Invalid data provided.");
+    break;
+  case 409:
+    alert(data.message || "User already exists.");
+    break;
+  // ... more cases
+}
+```
+
+1. **Violates Open/Closed Principle** - You have to modify the function every time you add a new error type
+2. **Mixes concerns** - UI logic (`alert`) is inside your error handling logic
+3. **Not reusable** - Every component needs this same switch case
+4. **Hard to test** - Can't mock individual handlers
+
+### **ChatGPT's Response**
+
+| Aspect | Assessment |
+|--------|------------|
+| **Correctness** | ✅ Works |
+| **Architecture** | ❌ Very basic - Just added HTML form fallbacks |
+| **Production Grade** | ❌ Not at all - Uses `alert()`, no error handling strategy |
+
+ChatGPT's response was more about adding form action fallbacks and not about error handling architecture.
+
+---
+
+## 🏭 How It's Actually Done in Production
+
+Based on my research of open-source projects like **Bulletproof React**, **TanStack Query**, and patterns used at companies like **Stripe**, here's the **professional approach**:
+
+### Pattern 1: **Object Map Pattern (Better than Switch)**
+
+```javascript
+// src/utils/errorHandlers.js
+
+/**
+ * Error handler registry - Open/Closed Principle
+ * You can add new handlers without modifying existing code
+ */
+const ERROR_HANDLERS = {
+  // HTTP Status-based handlers
+  400: {
+    message: "Invalid request. Please check your input.",
+    action: "SHOW_FORM_ERRORS",
+    recoverable: true,
+  },
+  401: {
+    message: "Session expired. Please login again.",
+    action: "LOGOUT_USER",
+    recoverable: false,
+  },
+  403: {
+    message: "You don't have permission to do this.",
+    action: "SHOW_TOAST",
+    recoverable: false,
+  },
+  404: {
+    message: "Resource not found.",
+    action: "SHOW_TOAST",
+    recoverable: false,
+  },
+  409: {
+    message: "This resource already exists.",
+    action: "SHOW_TOAST",
+    recoverable: true,
+  },
+  422: {
+    message: "Validation failed.",
+    action: "SHOW_FORM_ERRORS",
+    recoverable: true,
+  },
+  429: {
+    message: "Too many requests. Please wait.",
+    action: "SHOW_TOAST",
+    recoverable: true,
+    retryAfter: true,
+  },
+  500: {
+    message: "Server error. Please try again later.",
+    action: "SHOW_TOAST",
+    recoverable: false,
+  },
+  502: {
+    message: "Service temporarily unavailable.",
+    action: "SHOW_TOAST",
+    recoverable: true,
+  },
+  503: {
+    message: "Service under maintenance.",
+    action: "SHOW_TOAST",
+    recoverable: true,
+  },
+};
+
+// Business logic error codes (from your API)
+const BUSINESS_ERROR_HANDLERS = {
+  USER_EXISTS: {
+    message: "This account already exists. Please login instead.",
+    action: "SWITCH_TO_LOGIN",
+    recoverable: true,
+  },
+  INVALID_OTP: {
+    message: "Invalid OTP. Please try again.",
+    action: "SHOW_FORM_ERRORS",
+    recoverable: true,
+  },
+  OTP_EXPIRED: {
+    message: "OTP has expired. Please request a new one.",
+    action: "SHOW_TOAST",
+    recoverable: true,
+  },
+  ACCOUNT_LOCKED: {
+    message: "Account temporarily locked. Try again in 30 minutes.",
+    action: "SHOW_TOAST",
+    recoverable: false,
+  },
+};
+
+/**
+ * Process error and return standardized result
+ */
+export function processApiError(error) {
+  // 1. Network Error (no response)
+  if (!error.response) {
+    return {
+      type: 'NETWORK_ERROR',
+      status: null,
+      message: error.code === 'ECONNABORTED' 
+        ? 'Request timed out. Please try again.'
+        : 'Network error. Please check your connection.',
+      action: 'SHOW_TOAST',
+      recoverable: true,
+      original: error,
+    };
+  }
+
+  const { status, data } = error.response;
+
+  // 2. Check for business logic error code first
+  const errorCode = data?.code || data?.error || data?.type;
+  if (errorCode && BUSINESS_ERROR_HANDLERS[errorCode]) {
+    return {
+      type: 'BUSINESS_ERROR',
+      status,
+      code: errorCode,
+      ...BUSINESS_ERROR_HANDLERS[errorCode],
+      serverMessage: data?.message,
+      original: error,
+    };
+  }
+
+  // 3. Fall back to HTTP status handler
+  const statusHandler = ERROR_HANDLERS[status] || {
+    message: data?.message || 'An unexpected error occurred.',
+    action: 'SHOW_TOAST',
+    recoverable: false,
+  };
+
+  return {
+    type: 'HTTP_ERROR',
+    status,
+    ...statusHandler,
+    serverMessage: data?.message,
+    original: error,
+  };
+}
+```
+
+**Why Object Map is better than Switch:**
+
+| Switch Case | Object Map |
+|-------------|------------|
+| Hard to add new cases | Just add a new key |
+| Can't serialize/share | Can be loaded from config |
+| Logic scattered | Logic centralized |
+| Hard to test | Easy to test each handler |
+
+---
+
+### Pattern 2: **Custom Error Classes (How Stripe Does It)**
+
+This is **the most professional approach** - used by Stripe, AWS SDK, and most enterprise libraries:
+
+```javascript
+// src/errors/ApiError.js
+
+/**
+ * Base class for all API errors
+ * Stripe-style error hierarchy
+ */
+export class ApiError extends Error {
+  constructor(message, options = {}) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = options.status || null;
+    this.code = options.code || 'UNKNOWN_ERROR';
+    this.recoverable = options.recoverable ?? false;
+    this.retryable = options.retryable ?? false;
+    this.details = options.details || null;
+    this.timestamp = new Date().toISOString();
+    
+    // Maintains proper stack trace for where our error was thrown
+    Error.captureStackTrace?.(this, this.constructor);
+  }
+
+  toJSON() {
+    return {
+      name: this.name,
+      message: this.message,
+      status: this.status,
+      code: this.code,
+      recoverable: this.recoverable,
+      timestamp: this.timestamp,
+    };
+  }
+}
+
+/**
+ * Network related errors (no response from server)
+ */
+export class NetworkError extends ApiError {
+  constructor(originalError) {
+    const isTimeout = originalError.code === 'ECONNABORTED';
+    super(
+      isTimeout 
+        ? 'Request timed out. Please try again.' 
+        : 'Network error. Please check your connection.',
+      {
+        code: isTimeout ? 'TIMEOUT' : 'NETWORK_ERROR',
+        recoverable: true,
+        retryable: true,
+      }
+    );
+    this.name = 'NetworkError';
+    this.originalError = originalError;
+  }
+}
+
+/**
+ * Validation errors (400, 422)
+ */
+export class ValidationError extends ApiError {
+  constructor(message, fieldErrors = {}, status = 400) {
+    super(message, {
+      status,
+      code: 'VALIDATION_ERROR',
+      recoverable: true,
+      details: fieldErrors,
+    });
+    this.name = 'ValidationError';
+    this.fieldErrors = fieldErrors;
+  }
+
+  getFieldError(field) {
+    return this.fieldErrors[field] || null;
+  }
+}
+
+/**
+ * Authentication errors (401)
+ */
+export class AuthenticationError extends ApiError {
+  constructor(message = 'Please login to continue.', reason = 'UNAUTHORIZED') {
+    super(message, {
+      status: 401,
+      code: reason,
+      recoverable: false,
+    });
+    this.name = 'AuthenticationError';
+    this.reason = reason;
+  }
+}
+
+/**
+ * Authorization errors (403)
+ */
+export class ForbiddenError extends ApiError {
+  constructor(message = "You don't have permission to do this.") {
+    super(message, {
+      status: 403,
+      code: 'FORBIDDEN',
+      recoverable: false,
+    });
+    this.name = 'ForbiddenError';
+  }
+}
+
+/**
+ * Resource not found (404)
+ */
+export class NotFoundError extends ApiError {
+  constructor(resource = 'Resource') {
+    super(`${resource} not found.`, {
+      status: 404,
+      code: 'NOT_FOUND',
+      recoverable: false,
+    });
+    this.name = 'NotFoundError';
+    this.resource = resource;
+  }
+}
+
+/**
+ * Conflict errors (409) - e.g., user already exists
+ */
+export class ConflictError extends ApiError {
+  constructor(message = 'This resource already exists.', conflictType = 'DUPLICATE') {
+    super(message, {
+      status: 409,
+      code: conflictType,
+      recoverable: true,
+    });
+    this.name = 'ConflictError';
+    this.conflictType = conflictType;
+  }
+}
+
+/**
+ * Rate limit errors (429)
+ */
+export class RateLimitError extends ApiError {
+  constructor(retryAfter = 60) {
+    super(`Too many requests. Please wait ${retryAfter} seconds.`, {
+      status: 429,
+      code: 'RATE_LIMITED',
+      recoverable: true,
+      retryable: true,
+    });
+    this.name = 'RateLimitError';
+    this.retryAfter = retryAfter;
+  }
+}
+
+/**
+ * Server errors (500, 502, 503, 504)
+ */
+export class ServerError extends ApiError {
+  constructor(status = 500, message = 'Server error. Please try again later.') {
+    super(message, {
+      status,
+      code: 'SERVER_ERROR',
+      recoverable: false,
+      retryable: status !== 500, // 502, 503, 504 are retryable
+    });
+    this.name = 'ServerError';
+  }
+}
+```
+
+---
+
+### Pattern 3: **Error Factory (Converting Axios Errors)**
+
+```javascript
+// src/errors/errorFactory.js
+import {
+  ApiError,
+  NetworkError,
+  ValidationError,
+  AuthenticationError,
+  ForbiddenError,
+  NotFoundError,
+  ConflictError,
+  RateLimitError,
+  ServerError,
+} from './ApiError';
+
+/**
+ * Factory function to convert Axios errors to typed errors
+ * This is the ONLY place that knows about Axios error structure
+ */
+export function createApiError(axiosError) {
+  // 1. Network error (no response)
+  if (!axiosError.response) {
+    return new NetworkError(axiosError);
+  }
+
+  const { status, data, headers } = axiosError.response;
+
+  // 2. Map status codes to error classes
+  switch (status) {
+    case 400:
+    case 422:
+      return new ValidationError(
+        data?.message || 'Validation failed.',
+        data?.errors || {},
+        status
+      );
+
+    case 401:
+      return new AuthenticationError(
+        data?.message || 'Session expired. Please login again.',
+        data?.code || 'SESSION_EXPIRED'
+      );
+
+    case 403:
+      return new ForbiddenError(data?.message);
+
+    case 404:
+      return new NotFoundError(data?.resource);
+
+    case 409:
+      return new ConflictError(
+        data?.message || 'Resource already exists.',
+        data?.code || 'DUPLICATE'
+      );
+
+    case 429:
+      return new RateLimitError(
+        parseInt(headers?.['retry-after']) || 60
+      );
+
+    case 500:
+    case 502:
+    case 503:
+    case 504:
+      return new ServerError(status, data?.message);
+
+    default:
+      return new ApiError(
+        data?.message || 'An unexpected error occurred.',
+        { status, code: data?.code }
+      );
+  }
+}
+```
+
+---
+
+### Pattern 4: **API Layer with Error Transformation**
+
+```javascript
+// src/libs/api.js
+import axios from "axios";
+import { createApiError } from "../errors/errorFactory";
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3750',
+  timeout: 15000,
+  headers: { "Content-Type": "application/json" },
+});
+
+// Request interceptor
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
+
+// Response interceptor - TRANSFORM errors here
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Transform Axios error to our typed error
+    const apiError = createApiError(error);
+    
+    // Log for monitoring (Sentry, LogRocket, etc.)
+    if (import.meta.env.PROD) {
+      // sentryCapture(apiError);
+    }
+    
+    // Reject with our typed error
+    return Promise.reject(apiError);
+  }
+);
+
+export default api;
+```
+
+---
+
+### Pattern 5: **Component Usage with Typed Errors**
+
+Now your component code becomes **clean and semantic**:
+
+```javascript
+// src/components/SignUpPanel.jsx
+import { useState } from 'react';
+import { registerApi } from '../libs/authApi';
+import { 
+  ConflictError, 
+  ValidationError, 
+  NetworkError 
+} from '../errors/ApiError';
+import { useToast } from '../store/toastStore';
+
+export function SignUpPanel() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
+  const toast = useToast();
+
+  async function handleSignUp(payload) {
+    setIsSubmitting(true);
+    setFormErrors({});
+
+    try {
+      const res = await registerApi(payload);
+      
+      if (res?.data?.success) {
+        toast.success("Account created! Please verify OTP.");
+        // Navigate to OTP...
+      }
+    } catch (error) {
+      // 🔥 Clean, semantic error handling with instanceof
+      
+      if (error instanceof ConflictError) {
+        toast.warning("Account already exists. Switching to login...");
+        // Switch to login tab
+        return;
+      }
+
+      if (error instanceof ValidationError) {
+        // Map field errors to form
+        setFormErrors(error.fieldErrors);
+        toast.error(error.message);
+        return;
+      }
+
+      if (error instanceof NetworkError) {
+        toast.error(error.message);
+        return;
+      }
+
+      // Generic fallback
+      toast.error(error.message || "Something went wrong.");
+      
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  return (
+    <form onSubmit={handleSubmit(handleSignUp)}>
+      {/* fields... */}
+      {formErrors.email && <span className="error">{formErrors.email}</span>}
+      <button disabled={isSubmitting}>
+        {isSubmitting ? 'Signing up...' : 'Sign Up'}
+      </button>
+    </form>
+  );
+}
+```
+
+---
+
+## 🏆 The Gold Standard: TanStack Query + Error Classes
+
+For the **ultimate production setup**, combine with TanStack Query:
+
+```javascript
+// src/lib/queryClient.js
+import { QueryClient, MutationCache, QueryCache } from '@tanstack/react-query';
+import { AuthenticationError } from '../errors/ApiError';
+import { useAuthStore } from '../store/authStore';
+
+export const queryClient = new QueryClient({
+  queryCache: new QueryCache({
+    onError: (error, query) => {
+      // Global query error handling
+      if (error instanceof AuthenticationError) {
+        useAuthStore.getState().logout();
+        window.location.href = '/login';
+      }
+    },
+  }),
+  mutationCache: new MutationCache({
+    onError: (error, variables, context, mutation) => {
+      // Global mutation error handling
+      console.error('Mutation error:', error.toJSON?.() || error);
+    },
+  }),
+  defaultOptions: {
+    queries: {
+      retry: (failureCount, error) => {
+        // Don't retry on 4xx errors
+        if (error.status && error.status < 500) return false;
+        // Retry 3 times on 5xx or network errors
+        return failureCount < 3;
+      },
+      staleTime: 30 * 1000, // 30 seconds
+    },
+    mutations: {
+      retry: false, // Don't auto-retry mutations
+    },
+  },
+});
+```
+
+```javascript
+// Usage with useMutation
+import { useMutation } from '@tanstack/react-query';
+import { authService } from '../libs/services/authService';
+
+function SignUpPanel() {
+  const signupMutation = useMutation({
+    mutationFn: authService.register,
+    onSuccess: (data) => {
+      toast.success("Account created!");
+      // Handle success...
+    },
+    onError: (error) => {
+      // Error is already typed!
+      if (error instanceof ConflictError) {
+        toast.warning("Account exists. Please login.");
+      } else {
+        toast.error(error.message);
+      }
+    },
+  });
+
+  return (
+    <form onSubmit={handleSubmit(data => signupMutation.mutate(data))}>
+      <button disabled={signupMutation.isPending}>
+        {signupMutation.isPending ? 'Processing...' : 'Sign Up'}
+      </button>
+    </form>
+  );
+}
+```
+
+---
+
+## 📊 Final Comparison
+
+| Approach | Gemini (Switch) | Object Map | Custom Classes |
+|----------|-----------------|------------|----------------|
+| **Readability** | Medium | Good | Excellent |
+| **Maintainability** | Poor | Good | Excellent |
+| **Type Safety** | None | None | **Full (with TS)** |
+| **Testability** | Hard | Medium | Easy |
+| **Extensibility** | Poor | Good | Excellent |
+| **Industry Usage** | Tutorials | Some production | Enterprise/Production |
+| **Semantic Handling** | ❌ | ⚠️ | ✅ `instanceof` |
+
+---
+
+## 🎯 My Recommendation for Your Project
+
+Given your current setup (Zustand, React, Axios), I recommend:
+
+1. **Phase 1**: Implement the **Object Map Pattern** + `processApiError` utility
+2. **Phase 2**: Add **Custom Error Classes** as you scale
+3. **Phase 3**: Migrate to **TanStack Query** for full data-fetching management
+
+This gives you:
+- Clean component code
+- Centralized error handling
+- Easy to add new error types
+- Proper separation of concerns
+- Production-grade architecture
+
+Would you like me to elaborate on any specific pattern or show how to implement this in your specific codebase?
