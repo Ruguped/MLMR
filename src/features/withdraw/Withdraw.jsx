@@ -1,28 +1,64 @@
-
+import React, { useState, useEffect } from "react";
+import { withdrawOtp } from "../../libs/authApi.js";
+import { useToast } from "../../store/toastStore.js";
+import AddAccountPopUp from "./AddAccountPopUp";
 
 
 export default function Withdraw() {
-    return (
-        <div className="dashboard_right">
+  const toast = useToast();
+  const [showAddAccountPopUp, setShowAddAccountPopUp] = useState(false);
+
+  const [resendCountdown, setResendCountdown] = useState(0);
+  //=====countdown timer for otp resend=====//
+  useEffect(() => {
+    if (resendCountdown <= 0) return;
+
+    const timer = setTimeout(() => {
+      setResendCountdown(prev => prev - 1);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [resendCountdown]);
+
+
+  async function handleSendOtp() {
+    //simple gurad laga dia
+    if (resendCountdown > 0) return;
+    try {
+
+      setResendCountdown(60);
+
+      toast.success("OTP sent successfully!");
+    } catch (error) {
+      console.error('Error sending OTP:', error);
+      toast.error("Error sending OTP");
+    }
+  }
+
+
+
+
+  return (
+    <div className="dashboard_right">
 
       <div className="top_header_dash">
         <div className="user_profile">
           <div className="user_img"><img src="/images/user_dash_profile.svg" alt="user" height="54px" width="54px"
-              className="round_img"/></div>
+            className="round_img" /></div>
           <div className="user_profile_cnt">
             <h3>pallavsoni64@gmail.com</h3>
             <ul className="user_social">
-              <li><a href="#"><img src="/images/user_social.svg" alt="social"/></a></li>
-              <li><a href="#"><img src="/images/user_social2.svg" alt="social"/></a></li>
+              <li><a href="#"><img src="/images/user_social.svg" alt="social" /></a></li>
+              <li><a href="#"><img src="/images/user_social2.svg" alt="social" /></a></li>
             </ul>
           </div>
         </div>
         <div className="profile_id_s">
           <div className="profile_id">
-            <span>UID :</span>16439869<img src="/images/uid_icon.svg" className="m-1" alt="icon"/>
+            <span>UID :</span>16439869<img src="/images/uid_icon.svg" className="m-1" alt="icon" />
           </div>
           <div className="profile_id">
-            <span>Referral ID :</span>GATB253265<img src="/images/uid_icon.svg" className="m-1" alt="icon"/>
+            <span>Referral ID :</span>GATB253265<img src="/images/uid_icon.svg" className="m-1" alt="icon" />
           </div>
           <div className="profile_id kycstatus">
             <span>KYC Status</span><a className="text-success" href="#">KYC Verified</a>
@@ -31,7 +67,10 @@ export default function Withdraw() {
         </div>
       </div>
 
+      {/*===============================WithdrawBlock==============================*/}
 
+
+      {showAddAccountPopUp && <AddAccountPopUp setShowAddAccountPopUp={setShowAddAccountPopUp} />}
       <div className="deposit_block_das withdraw_inquery_s">
         <h2>Withdraw</h2>
         <div className="qur_code_inquery">
@@ -39,14 +78,14 @@ export default function Withdraw() {
           <form>
             <div className="info_input">
               <div className="d-flex">
-              <input type="text" placeholder="Amount"/>
-              <span>Max</span>
+                <input type="text" placeholder="Amount" />
+                <span>Max</span>
               </div>
             </div>
             <div className="info_input">
               <div className="d-flex">
-              <input type="text" placeholder="OTP"/>
-              <span>Get OTP</span>
+                <input type="text" placeholder="OTP" />
+                <span onClick={handleSendOtp} style={{ cursor: resendCountdown > 0 ? 'not-allowed' : 'pointer' }}>{`${resendCountdown > 0 ? `(${resendCountdown}s)` : 'Get OTP'}`}</span>
               </div>
             </div>
             <div className="info_input">
@@ -56,8 +95,11 @@ export default function Withdraw() {
             </div>
             <div className="info_input">
               <select>
+                <option value="" disabled>Select bank</option>
                 <option>Yes Bank (1234560)</option>
+                <option onClick={() => {console.log('Add New Account')}}>+ Add New Account</option>
               </select>
+              <span onClick={() => setShowAddAccountPopUp(prev=>!prev)}>+ Add New Account</span>
             </div>
 
             <div className="bankdel">
@@ -79,5 +121,5 @@ export default function Withdraw() {
 
 
     </div>
-    )
+  )
 }

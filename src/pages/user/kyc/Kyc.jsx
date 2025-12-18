@@ -14,8 +14,8 @@ export default function Kyc() {
   panCardImage: null,
   
   // Step 2 - Aadhar
-  aadharNumber: '',
-  confirmAadharNumber: '',
+  aadhaarNumber: '',
+  confirmAadhaarNumber: '',
   aadharFrontImage: null,
   aadharBackImage: null,
 

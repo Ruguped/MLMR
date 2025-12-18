@@ -54,3 +54,12 @@ export const submitKyc = (payload) => api.post('/api/user/kyc/submit', payload, 
 export const deposit = (payload) => api.post('/api/user/deposit', payload, {
     headers: { 'Content-Type': 'multipart/form-data' }
 });
+
+
+
+//withdraw api
+//otp
+export const withdrawOtp = () => api.get('/api/user/withdraw-otp');
+export const withdraw = (payload) => api.post('/api/user/withdraw', payload, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+});

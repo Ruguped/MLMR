@@ -8,15 +8,15 @@ export default function StepAadhar({ formData, updateField, setCurrentStep }) {
     e.preventDefault();
 
     // Validation checks
-    if (!formData.aadharNumber) {
+    if (!formData.aadhaarNumber) {
       toast.error('Please enter Aadhar number');
       return;
     }
-    if (!formData.confirmAadharNumber) {
+    if (!formData.confirmAadhaarNumber) {
       toast.error('Please confirm Aadhar number');
       return;
     }
-    if (formData.aadharNumber !== formData.confirmAadharNumber) {
+    if (formData.aadhaarNumber !== formData.confirmAadhaarNumber) {
       toast.error('Aadhar numbers do not match');
       return;
     }
@@ -57,8 +57,8 @@ export default function StepAadhar({ formData, updateField, setCurrentStep }) {
                 <input
                   type="text"
                   placeholder="Enter Aadhar number"
-                  value={formData.aadharNumber}
-                  onChange={(e) => updateField('aadharNumber', e.target.value)}
+                  value={formData.aadhaarNumber}
+                  onChange={(e) => updateField('aadhaarNumber', e.target.value)}
                 />
               </div>
             </div>
@@ -68,8 +68,8 @@ export default function StepAadhar({ formData, updateField, setCurrentStep }) {
                 <input
                   type="text"
                   placeholder="Confirm Aadhar number"
-                  value={formData.confirmAadharNumber}
-                  onChange={(e) => updateField('confirmAadharNumber', e.target.value)}
+                  value={formData.confirmAadhaarNumber}
+                  onChange={(e) => updateField('confirmAadhaarNumber', e.target.value)}
                 />
               </div>
             </div>

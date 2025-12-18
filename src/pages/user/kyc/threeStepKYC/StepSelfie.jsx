@@ -24,7 +24,7 @@ export default function StepSelfie({ formData, updateField, setCurrentStep }) {
       // Create FormData for file upload
       const payload = new FormData();
       payload.append('panNumber', formData.panNumber);
-      payload.append('aadharNumber', formData.aadharNumber);
+      payload.append('aadhaarNumber', formData.aadhaarNumber);
       payload.append('panCardImage', formData.panCardImage);
       payload.append('aadharFrontImage', formData.aadharFrontImage);
       payload.append('aadharBackImage', formData.aadharBackImage);
