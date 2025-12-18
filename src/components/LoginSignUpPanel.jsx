@@ -15,7 +15,7 @@ export function LoginSignUpPanel() {
             {/* Left Section */}
             <div className="col-md-6 text-center">
               <div className="login_vector">
-                <img src="images/forex_login_vector.png" alt="Login" />
+                <img src="/images/forex_login_vector.png" alt="Login" />
               </div>
             </div>
 

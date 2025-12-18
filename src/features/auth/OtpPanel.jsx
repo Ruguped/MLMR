@@ -92,10 +92,10 @@ export function OtpPanel({ panelId }) {
   return (
     <div className="tab-pane fade show active" id={panelId} role="tabpanel">
       <div className="otp-panel">
-        <p className="text-white bold">
+        <p className="text-black bold">
           We sent an OTP to <strong>{signUpData?.email || signUpData?.phone}</strong>.
         </p>
-        <p className="text-white">Please Verify OTP to Login.</p>
+        <p className="text-black">Please Verify OTP to Login.</p>
 
         <form action={handleOtpVerify}>
           <div className="form_input">

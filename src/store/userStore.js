@@ -3,22 +3,19 @@ import { profile } from '../libs/authApi';
 
 const useUserStore = create((set) => ({
   user: null,
-  isLoaded: false,
-  isLoading: false,
-  
-  setUser: (user) => set({ user, isLoaded: true }),
+
+  setUser: (user) => set({ user }),
 
   refreshUser: async () => {
-    set({ isLoading: true });
     try {
       const res = await profile();
-      set({ user: res.data.user, isLoaded: true, isLoading: false });
+      set({ user: res.data.user});
     } catch (error) {
-      set({ isLoading: false });
+      console.log(error);
     }
   },
 
-  clearUser: () => set({ user: null, isLoaded: false }),
+  clearUser: () => set({ user: null}),
 }));
 
 export default useUserStore;

@@ -66,7 +66,7 @@
 //               {/* Left Section */}
 //               <div className="col-md-6 text-center">
 //                 <div className="login_vector">
-//                   <img src="images/forex_login_vector.png" alt="Login" />
+//                   <img src="/images/forex_login_vector.png" alt="Login" />
 //                 </div>
 //               </div>
 //               {/* Right Section */}
@@ -115,7 +115,7 @@
 //                               <div className="form_input">
 //                                 <input name="password" type="password" className="form-control mb-2" placeholder="Enter Password" />
 //                                 <div className="hide_vector">
-//                                   <img src="images/hide_vector.svg" alt="eye" />
+//                                   <img src="/images/hide_vector.svg" alt="eye" />
 //                                 </div>
 //                               </div>
 //                               <div className="text-end mb-3 forgetpassword"><a href="#" className="text-warning small">Forget Password ?</a></div>
@@ -137,7 +137,7 @@
 //                               <div className="form_input">
 //                                 <input name="password" type="password" className="form-control mb-2" placeholder="Enter Password" />
 //                                 <div className="hide_vector">
-//                                   <img src="images/hide_vector.svg" alt="eye" />
+//                                   <img src="/images/hide_vector.svg" alt="eye" />
 //                                 </div>
 //                               </div>
 //                               <div className="text-end mb-3 forgetpassword"><a href="#" className="text-warning small">Forget Password ?</a></div>
@@ -178,7 +178,7 @@
 //                               <div className="form_input">
 //                                 <input name="reg_password" type="password" className="form-control mb-2" placeholder="Enter Password" />
 //                                 <div className="hide_vector">
-//                                   <img src="images/hide_vector.svg" alt="eye" />
+//                                   <img src="/images/hide_vector.svg" alt="eye" />
 //                                 </div>
 //                               </div>
 //                               <div className="form_input">
@@ -219,7 +219,7 @@
 //                               <div className="form_input">
 //                                 <input name="reg_password" type="password" className="form-control mb-2" placeholder="Enter Password" />
 //                                 <div className="hide_vector">
-//                                   <img src="images/hide_vector.svg" alt="eye" />
+//                                   <img src="/images/hide_vector.svg" alt="eye" />
 //                                 </div>
 //                               </div>
 //                               <div className="form_input">
@@ -332,7 +332,7 @@ import React from "react";// // src/pages/Login.jsx
 //               {/* Left Section */}
 //               <div className="col-md-6 text-center">
 //                 <div className="login_vector">
-//                   <img src="images/forex_login_vector.png" alt="Login" />
+//                   <img src="/images/forex_login_vector.png" alt="Login" />
 //                 </div>
 //               </div>
 
@@ -386,7 +386,7 @@ import React from "react";// // src/pages/Login.jsx
 //                               <div className="form_input">
 //                                 <input name="password" type="password" className="form-control mb-2" placeholder="Enter Password" />
 //                                 <div className="hide_vector">
-//                                   <img src="images/hide_vector.svg" alt="eye" />
+//                                   <img src="/images/hide_vector.svg" alt="eye" />
 //                                 </div>
 //                               </div>
 //                               <div className="text-end mb-3 forgetpassword"><a href="#" className="text-warning small">Forget Password ?</a></div>
@@ -409,7 +409,7 @@ import React from "react";// // src/pages/Login.jsx
 //                               <div className="form_input">
 //                                 <input name="password" type="password" className="form-control mb-2" placeholder="Enter Password" />
 //                                 <div className="hide_vector">
-//                                   <img src="images/hide_vector.svg" alt="eye" />
+//                                   <img src="/images/hide_vector.svg" alt="eye" />
 //                                 </div>
 //                               </div>
 //                               <div className="text-end mb-3 forgetpassword"><a href="#" className="text-warning small">Forget Password ?</a></div>
@@ -454,7 +454,7 @@ import React from "react";// // src/pages/Login.jsx
 //                               <div className="form_input">
 //                                 <input name="reg_password" type="password" className="form-control mb-2" placeholder="Enter Password" />
 //                                 <div className="hide_vector">
-//                                   <img src="images/hide_vector.svg" alt="eye" />
+//                                   <img src="/images/hide_vector.svg" alt="eye" />
 //                                 </div>
 //                               </div>
 //                               <div className="form_input">
@@ -498,7 +498,7 @@ import React from "react";// // src/pages/Login.jsx
 //                               <div className="form_input">
 //                                 <input name="reg_password" type="password" className="form-control mb-2" placeholder="Enter Password" />
 //                                 <div className="hide_vector">
-//                                   <img src="images/hide_vector.svg" alt="eye" />
+//                                   <img src="/images/hide_vector.svg" alt="eye" />
 //                                 </div>
 //                               </div>
 //                               <div className="form_input">

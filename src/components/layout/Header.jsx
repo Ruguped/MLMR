@@ -15,7 +15,7 @@ export function Header({ }) {
     <div className="container">
       <div className="row">
         <div className="col-sm-12 col-md-2 col-lg-2 headerlogo">
-          <div className="logo"><Link to="/"><img src="images/dametrade_logo.png" alt="dametrade_logo" /></Link></div>
+          <div className="logo"><Link to="/"><img src="/images/dametrade_logo.png" alt="dametrade_logo" /></Link></div>
         </div>
         <div className="col-sm-12 col-md-10 col-lg-10">
           <div className="header_right_bl">

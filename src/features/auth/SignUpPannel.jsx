@@ -70,7 +70,7 @@ export function SignUpPannel() {
     resolver: zodResolver(mobileSchema),
     mode: "onTouched"
   });
-
+//from = {register,handleSubmit,formState:{errors}}
   const { register: registerEmail, handleSubmit: handleEmailSubmit, formState: { errors: emailErrors } } = useForm({
     resolver: zodResolver(emailSchema),
     mode: "onTouched"

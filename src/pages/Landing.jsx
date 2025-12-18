@@ -1,5 +1,6 @@
 import { Faq } from '../components/Faq';
 import React from "react";
+import {Footer} from '../components/Footer.jsx'
 
 
 export default function Landing() {
@@ -7,12 +8,12 @@ export default function Landing() {
     <>
       <section className="hero_section">
         <div className="banner_top_lft_vector">
-          <img src="images/banner_top_lft_vector.svg" alt="topvector" />
+          <img src="/images/banner_top_lft_vector.svg" alt="topvector" />
         </div>
         <div className="container">
           <div className="banner_section">
             <div className="rounded_vector">
-              <img src="images/right_vector_effect.svg" />
+              <img src="/images/right_vector_effect.svg" />
             </div>
             <div className="banner_cnt">
               <h1>Build Your Team. Grow Your Income. Achieve Financial Freedom.</h1>
@@ -35,14 +36,14 @@ export default function Landing() {
             </div>
             <div className="banner_img">
               <div className="top_vector">
-                <img src="images/a_vector.svg" />
+                <img src="/images/a_vector.svg" />
               </div>
-              <img src="images/banner_img.svg" alt="banner" />
+              <img src="/images/banner_img.svg" alt="banner" />
             </div>
           </div>
         </div>
         <div className="vector_bottom">
-          <img src="images/banner_bottom_vector.svg" alt="bottomlft" />
+          <img src="/images/banner_bottom_vector.svg" alt="bottomlft" />
         </div>
       </section>
 
@@ -54,14 +55,14 @@ export default function Landing() {
             <div className="col-sm-4">
               <div className="whyblock">
                 <div className="line_animation">
-                  <img src="images/line_vector.svg" />
+                  <img src="/images/line_vector.svg" />
                 </div>
                 <div className="instant_vector">
-                  <img src="images/tracking_vector.svg" alt="transparent" />
+                  <img src="/images/tracking_vector.svg" alt="transparent" />
                 </div>
                 <div className="whychoose_cnt">
                   <div className="left_animation">
-                    <img src="images/radius_effect.svg" />
+                    <img src="/images/radius_effect.svg" />
                   </div>
                   <div className="cnt">
                     <h3>100% Transparent</h3>
@@ -80,23 +81,23 @@ export default function Landing() {
                   </div>
                   <button>Learn More <i className="fa-solid fa-arrow-right" /></button>
                   <div className="dotted_effect">
-                    <img src="images/dotted_vector.svg" />
+                    <img src="/images/dotted_vector.svg" />
                   </div>
                 </div>
                 <div className="instant_vector">
-                  <img src="images/payout_vector.svg" alt="Instant Payouts" />
+                  <img src="/images/payout_vector.svg" alt="Instant Payouts" />
                 </div>
               </div>
             </div>
             <div className="col-sm-4">
               <div className="whyblock">
                 <div className="top_animation">
-                  <img src="images/radius_effect.svg" />
+                  <img src="/images/radius_effect.svg" />
                 </div>
                 <div className="instant_vector">
-                  <img src="images/smart_dash_vector.svg" alt="Smart Dashboard" />
+                  <img src="/images/smart_dash_vector.svg" alt="Smart Dashboard" />
                   <div className="dotted_effect_2">
-                    <img src="images/dotted_vector.svg" />
+                    <img src="/images/dotted_vector.svg" />
                   </div>
                 </div>
                 <div className="whychoose_cnt">
@@ -111,7 +112,7 @@ export default function Landing() {
             <div className="col-sm-6">
               <div className="whyblock flex_row">
                 <div className="instant_vector">
-                  <img src="images/community_vector.svg" alt="Strong Community Support" />
+                  <img src="/images/community_vector.svg" alt="Strong Community Support" />
                 </div>
                 <div className="whychoose_cnt">
                   <div className="cnt">
@@ -125,7 +126,7 @@ export default function Landing() {
             <div className="col-sm-6">
               <div className="whyblock flex_row">
                 <div className="instant_vector">
-                  <img src="images/security_vector.svg" alt="Advanced Security System" />
+                  <img src="/images/security_vector.svg" alt="Advanced Security System" />
                 </div>
                 <div className="whychoose_cnt">
                   <div className="cnt">
@@ -144,13 +145,13 @@ export default function Landing() {
       <section className="how_work">
         <div className="container">
           <div className="dotted_vector">
-            <img src="images/work_dotted.svg" />
+            <img src="/images/work_dotted.svg" />
           </div>
           <div className="row">
             <div className="col-sm-5">
               <div className="work_cnt">
                 <div className="work_vector">
-                  <img src="images/how_work_hd_vector.svg" />
+                  <img src="/images/how_work_hd_vector.svg" />
                 </div>
                 <h2>How It Works</h2>
                 <p>We build readymade websites, mobile applications, and elaborate online business services.</p>
@@ -161,28 +162,28 @@ export default function Landing() {
                 <ul>
                   <li>
                     <div className="account_icon">
-                      <img src="images/user_account.svg" />
+                      <img src="/images/user_account.svg" />
                     </div>
                     <h3>Register Your Account</h3>
                     <p>Protocols apart from aengage models, pricing billing</p>
                   </li>
                   <li>
                     <div className="account_icon">
-                      <img src="images/join_icon.svg" />
+                      <img src="/images/join_icon.svg" />
                     </div>
                     <h3>Join the Plan of Your Choice</h3>
                     <p>Protocols apart from aengage models, pricing billing</p>
                   </li>
                   <li>
                     <div className="account_icon">
-                      <img src="images/network_icon.svg" />
+                      <img src="/images/network_icon.svg" />
                     </div>
                     <h3>Refer &amp; Build Your Network</h3>
                     <p>Communication protocols apart from engagement models</p>
                   </li>
                   <li>
                     <div className="account_icon">
-                      <img src="images/income_icon.svg" />
+                      <img src="/images/income_icon.svg" />
                     </div>
                     <h3>Earn Direct + Level Income</h3>
                     <p>Protocols apart from aengage models, pricing billing</p>
@@ -203,17 +204,17 @@ export default function Landing() {
                 <h2>Income Opportunities</h2>
                 <p>Experience fun with LudoKing — play skill-based games, challenge friends, and earn CVT Rewards!</p>
                 <ul>
-                  <li><img src="images/opportunities_list_icon.svg" /> Direct Referral Income</li>
-                  <li><img src="images/opportunities_list_icon.svg" />Level Income</li>
-                  <li><img src="images/opportunities_list_icon.svg" />Team Bonus Rewards</li>
-                  <li><img src="images/opportunities_list_icon.svg" />Leadership Bonus</li>
-                  <li><img src="images/opportunities_list_icon.svg" />Monthly Achievement Rewards</li>
+                  <li><img src="/images/opportunities_list_icon.svg" /> Direct Referral Income</li>
+                  <li><img src="/images/opportunities_list_icon.svg" />Level Income</li>
+                  <li><img src="/images/opportunities_list_icon.svg" />Team Bonus Rewards</li>
+                  <li><img src="/images/opportunities_list_icon.svg" />Leadership Bonus</li>
+                  <li><img src="/images/opportunities_list_icon.svg" />Monthly Achievement Rewards</li>
                 </ul>
               </div>
             </div>
             <div className="col-sm-6">
               <div className="opportunities_vector">
-                <img src="images/opportunities_vector.png" alt="Income Opportunities" />
+                <img src="/images/opportunities_vector.png" alt="Income Opportunities" />
               </div>
             </div>
           </div>
@@ -228,12 +229,12 @@ export default function Landing() {
             <div className="col-sm-4">
               <div className="packages_block">
                 <div className="star_icon">
-                  <img src="images/star_icon.png" />
+                  <img src="/images/star_icon.png" />
                 </div>
                 <div className="top_package_cnt">
                   <div className="top_hd">
                     <div className="star">
-                      <img src="images/basic_star.png" />
+                      <img src="/images/basic_star.png" />
                     </div>
                     <h3>Basic</h3>
                     <span>Entry Level</span>
@@ -253,12 +254,12 @@ export default function Landing() {
             <div className="col-sm-4">
               <div className="packages_block silver_block">
                 <div className="star_icon">
-                  <img src="images/star_icon.png" />
+                  <img src="/images/star_icon.png" />
                 </div>
                 <div className="top_package_cnt">
                   <div className="top_hd">
                     <div className="star">
-                      <img src="images/silver_star.png" />
+                      <img src="/images/silver_star.png" />
                     </div>
                     <h3>Silver</h3>
                     <span>Popular Choice</span>
@@ -274,7 +275,7 @@ export default function Landing() {
                 </div>
                 <button className="planbtn">Select Plan</button>
                 <div className="star_effect">
-                  <img src="images/star_icon2.png" />
+                  <img src="/images/star_icon2.png" />
                 </div>
               </div>
             </div>
@@ -283,7 +284,7 @@ export default function Landing() {
                 <div className="top_package_cnt">
                   <div className="top_hd">
                     <div className="star">
-                      <img src="images/platinum_star.png" />
+                      <img src="/images/platinum_star.png" />
                     </div>
                     <h3>Platinum</h3>
                     <span>Professional</span>
@@ -299,19 +300,19 @@ export default function Landing() {
                 </div>
                 <button className="planbtn">Select Plan</button>
                 <div className="star_effect">
-                  <img src="images/star_icon.png" />
+                  <img src="/images/star_icon.png" />
                 </div>
               </div>
             </div>
             <div className="col-sm-4">
               <div className="packages_block gold_block">
                 <div className="star_icon">
-                  <img src="images/star_icon.png" />
+                  <img src="/images/star_icon.png" />
                 </div>
                 <div className="top_package_cnt">
                   <div className="top_hd">
                     <div className="star">
-                      <img src="images/gold_star.png" />
+                      <img src="/images/gold_star.png" />
                     </div>
                     <h3>Gold</h3>
                     <span>Entry Level</span>
@@ -327,7 +328,7 @@ export default function Landing() {
                 </div>
                 <button className="planbtn">Select Plan</button>
                 <div className="star_effect">
-                  <img src="images/star_icon2.png" />
+                  <img src="/images/star_icon2.png" />
                 </div>
               </div>
             </div>
@@ -336,7 +337,7 @@ export default function Landing() {
                 <div className="top_package_cnt">
                   <div className="top_hd">
                     <div className="star">
-                      <img src="images/diamond_star.png" />
+                      <img src="/images/diamond_star.png" />
                     </div>
                     <h3>Diamond</h3>
                     <span>Entry Level</span>
@@ -352,19 +353,19 @@ export default function Landing() {
                 </div>
                 <button className="planbtn">Select Plan</button>
                 <div className="star_effect">
-                  <img src="images/star_icon.png" />
+                  <img src="/images/star_icon.png" />
                 </div>
               </div>
             </div>
             <div className="col-sm-4">
               <div className="packages_block vip_block">
                 <div className="star_icon">
-                  <img src="images/star_icon.png" />
+                  <img src="/images/star_icon.png" />
                 </div>
                 <div className="top_package_cnt">
                   <div className="top_hd">
                     <div className="star">
-                      <img src="images/vip_star.png" />
+                      <img src="/images/vip_star.png" />
                     </div>
                     <h3>VIP</h3>
                     <span>Popular Choice</span>
@@ -393,12 +394,12 @@ export default function Landing() {
             your network.</p>
           <div className="level_list">
             <div className="borderline_effect">
-              <img src="images/border_line_vector.svg" />
+              <img src="/images/border_line_vector.svg" />
             </div>
             <ul>
               <li>
                 <div className="structure_icon">
-                  <img src="images/level_vector.png" />
+                  <img src="/images/level_vector.png" />
                 </div>
                 <div className="cnt_level">
                   <h5><span>Level 1</span> 10%</h5>
@@ -406,7 +407,7 @@ export default function Landing() {
               </li>
               <li>
                 <div className="structure_icon">
-                  <img src="images/level_vector2.png" />
+                  <img src="/images/level_vector2.png" />
                 </div>
                 <div className="cnt_level">
                   <h5><span>Level 2</span> 5%</h5>
@@ -414,7 +415,7 @@ export default function Landing() {
               </li>
               <li>
                 <div className="structure_icon">
-                  <img src="images/level_vector3.png" />
+                  <img src="/images/level_vector3.png" />
                 </div>
                 <div className="cnt_level">
                   <h5><span>Level 3</span> 4%</h5>
@@ -422,7 +423,7 @@ export default function Landing() {
               </li>
               <li>
                 <div className="structure_icon">
-                  <img src="images/level_vector4.png" />
+                  <img src="/images/level_vector4.png" />
                 </div>
                 <div className="cnt_level">
                   <h5><span>Level 4</span> 3%</h5>
@@ -430,7 +431,7 @@ export default function Landing() {
               </li>
               <li>
                 <div className="structure_icon">
-                  <img src="images/level_vector5.png" />
+                  <img src="/images/level_vector5.png" />
                 </div>
                 <div className="cnt_level">
                   <h5><span>Level 65</span> 1%</h5>
@@ -444,6 +445,8 @@ export default function Landing() {
 
 
       <Faq />
+
+      <Footer/>
 
 
     </>)

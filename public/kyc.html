@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MLM Grow KYC</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.bundle.js"></script>
+  <script type="text/javascript" src="js/bootstrap.esm.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/js/all.min.js"></script>
+  <script>
+    $(document).ready(function () {
+      $(window).scroll(function () {
+        if ($(window).width() > 767) {  // Only for desktop view
+          if ($(this).scrollTop() > 50) {
+            $('.leftside_menu').addClass('active');
+          } else {
+            $('.leftside_menu').removeClass('active');
+          }
+        } else {
+          $('.leftside_menu').removeClass('active');
+        }
+      });
+    });
+  </script>
+
+  <script>
+    $(document).ready(function () {
+      $("#toggleBtn").click(function () {
+        $("#content").toggleClass("open");
+      });
+
+      $('.mobile_view').click(function () {
+        $('.dashboard').toggleClass('dashboard_open');
+      });
+
+    });
+  </script>
+
+  <script>
+    $(document).ready(function () {
+      $("#toggleBtn_two").on("click", function () {
+        $(".leftside_menu").removeClass("open");
+      });
+    });
+  </script>
+
+</head>
+
+<body>
+
+  <header>
+    <div class="container">
+      <div class="row">
+        <div class="col-sm-12 col-md-2 col-lg-2 headerlogo">
+          <div class="logo"><a href="#"><img src="/images/dametrade_logo.png" alt="dametrade_logo"></a></div>
+        </div>
+        <div class="col-sm-12 col-md-10 col-lg-10">
+
+          <div class="header_right_bl">
+            <nav class="navbar navbar-expand-lg">
+              <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                  data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                  aria-label="Toggle navigation">
+                  <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                  <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" id="tradingDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Trading
+                      </a>
+                      <ul class="dropdown-menu" aria-labelledby="tradingDropdown">
+                        <li><a class="dropdown-item" href="#">Forex Trading</a></li>
+                        <li><a class="dropdown-item" href="#">Commodities</a></li>
+                        <li><a class="dropdown-item" href="#">Indices</a></li>
+                        <li><a class="dropdown-item" href="#">Stocks</a></li>
+                      </ul>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#">Platforms</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#">Tool & Resources</a>
+                    </li>
+                    <li class="nav-item">
+                      <a class="nav-link" href="#">Account Types</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                      <a class="nav-link dropdown-toggle" href="#" id="offersDropdown" role="button"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Offers
+                      </a>
+                      <ul class="dropdown-menu" aria-labelledby="offersDropdown">
+                        <li><a class="dropdown-item" href="#">Welcome Bonus</a></li>
+                        <li><a class="dropdown-item" href="#">Referral Program</a></li>
+                        <li><a class="dropdown-item" href="#">Loyalty Rewards</a></li>
+                      </ul>
+                    </li>
+
+                  </ul>
+                </div>
+              </div>
+            </nav>
+            <div class="login_sign">
+              <div class="language_option">
+                <select>
+                  <option>EN</option>
+                  <option>HI</option>
+                </select>
+              </div>
+              <button data-bs-toggle="modal" data-bs-target="#loginModal">Login
+              </button>
+              <button class="signbtn">Start Trading</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Login Modal -->
+    <div class="modal fade loginlightbox" id="loginModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+          <div class="row g-0">
+
+            <!-- Left Section -->
+            <div class="col-md-6 text-center">
+              <div class="login_vector">
+                <img src="/images/forex_login_vector.png" alt="Login">
+              </div>
+            </div>
+
+            <!-- Right Section -->
+            <div class="col-md-6 border_lft">
+              <div class="login_right">
+                <div class="d-flex justify-content-center pt-4">
+                  <ul class="nav nav-pills nav-login-tabs" id="loginSignupTabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link active" id="login-tab" data-bs-toggle="pill" data-bs-target="#login"
+                        type="button">Login</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="signup-tab" data-bs-toggle="pill" data-bs-target="#signup"
+                        type="button">Sign in</button>
+                    </li>
+                  </ul>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="methods_h">
+                  <h5>SHOW ALL METHODS</h5>
+                </div>
+                <div class="email_mobile_form">
+
+                  <div class="tab-content" id="loginSignupTabsContent">
+                    <div class="tab-pane fade show active" id="login">
+                      <ul class="nav emailtabs sub-tabs mb-3" id="loginMethodTabs" role="tablist">
+                        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab"
+                            data-bs-target="#mobile-login">Mobile</button></li>
+                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab"
+                            data-bs-target="#email-login">Email</button></li>
+                      </ul>
+
+                      <div class="tab-content">
+                        <div class="tab-pane fade show active" id="mobile-login">
+                          <form>
+                            <div class="form_input">
+                              <input type="text" class="form-control mb-3" placeholder="Enter Mobile Number">
+                            </div>
+                            <div class="form_input">
+                              <input type="password" class="form-control mb-2" placeholder="Enter Password">
+                              <div class="hide_vector">
+                                <img src="/images/hide_vector.svg" alt="eye">
+                              </div>
+                            </div>
+                            <div class="text-end mb-3 forgetpassword"><a href="#" class="text-warning small">Forget
+                                Password ?</a></div>
+                            <button class="btn btn-login w-100">Login</button>
+                            <div class="divider">Or Continue With</div>
+                            <button class="btn btn-google w-100"><img
+                                src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" width="20"
+                                class="me-2">Sign
+                              In
+                              With Google</button>
+                          </form>
+
+                        </div>
+
+                        <!-- Email Login -->
+                        <div class="tab-pane fade" id="email-login">
+                          <form>
+                            <div class="form_input">
+                              <input type="email" class="form-control mb-3" placeholder="Enter Email">
+                            </div>
+                            <div class="form_input">
+                              <input type="password" class="form-control mb-2" placeholder="Enter Password">
+                              <div class="hide_vector">
+                                <img src="/images/hide_vector.svg" alt="eye">
+                              </div>
+                            </div>
+                            <div class="text-end mb-3 forgetpassword"><a href="#" class="text-warning small">Forget
+                                Password ?</a></div>
+                            <button class="btn btn-login w-100">Login</button>
+                            <div class="divider">Or Continue With</div>
+                            <button class="btn btn-google w-100"><img
+                                src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" width="20"
+                                class="me-2">Sign In
+                              With Google</button>
+                          </form>
+                        </div>
+
+                      </div>
+                    </div>
+
+                    <!-- SIGNUP TAB -->
+                    <div class="tab-pane fade" id="signup">
+
+                      <ul class="nav emailtabs sub-tabs mb-3" id="loginMethodTabs_2" role="tablist">
+                        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab"
+                            data-bs-target="#mobile-login_2">Mobile</button></li>
+                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab"
+                            data-bs-target="#email-login_2">Email</button></li>
+                      </ul>
+
+                      <div class="tab-content">
+                        <div class="tab-pane fade show active" id="mobile-login_2">
+                          <form>
+                            <div class="form_input padding_space">
+                              <input type="text" class="form-control mb-3" placeholder="Enter Mobile Number">
+                              <div class="getotp">
+                                <button>Get Otp</button>
+                              </div>
+                            </div>
+                            <div class="form_input">
+                              <input type="text" class="form-control mb-3" placeholder="Enter Otp">
+                            </div>
+                            <div class="form_input">
+                              <input type="password" class="form-control mb-2" placeholder="Enter Password">
+                              <div class="hide_vector">
+                                <img src="/images/hide_vector.svg" alt="eye">
+                              </div>
+                            </div>
+
+                            <div class="form_input">
+                              <div class="selectoption">
+                                <label>Choose country of residence</label>
+                                <select>
+                                  <option>India</option>
+                                  <option>Japan</option>
+                                </select>
+                              </div>
+                            </div>
+
+                            <div class="form_input">
+                              <input type="text" class="form-control mb-2" placeholder="enter referral/promo code">
+                            </div>
+
+                            <div class="form_input">
+                              <div class="checkbox mb-2">
+                                <input type="checkbox">
+                                <span>I have read and agree to the <a href="#">user agreement</a>
+                                  and <a href="#">privacy policy</a></span>
+                              </div>
+                            </div>
+
+                            <button class="btn btn-login w-100">Sing In</button>
+
+                          </form>
+
+                        </div>
+
+                        <!-- Email Login -->
+                        <div class="tab-pane fade" id="email-login_2">
+                          <form>
+                            <div class="form_input">
+                              <input type="email" class="form-control mb-3" placeholder="Enter Email">
+                            </div>
+                            <div class="form_input">
+                              <input type="password" class="form-control mb-2" placeholder="Enter Password">
+                              <div class="hide_vector">
+                                <img src="/images/hide_vector.svg" alt="eye">
+                              </div>
+                            </div>
+
+                            <div class="form_input">
+                              <div class="selectoption">
+                                <label>Choose country of residence</label>
+                                <select>
+                                  <option>India</option>
+                                  <option>Japan</option>
+                                </select>
+                              </div>
+                            </div>
+
+                            <div class="form_input">
+                              <input type="text" class="form-control mb-2" placeholder="enter referral/promo code">
+                            </div>
+
+                            <div class="form_input">
+                              <div class="checkbox mb-2">
+                                <input type="checkbox">
+                                <span>I have read and agree to the <a href="#">user agreement</a>
+                                  and <a href="#">privacy policy</a></span>
+                              </div>
+                            </div>
+
+                            <button class="btn btn-login w-100">Sing In</button>
+                          </form>
+                        </div>
+
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!-- Login Modal End -->
+  </header>
+
+
+  <div class="dashboard profile_bg_none">
+    <div class="mobile_view" id="toggleBtn">
+      <div><i class="fa-solid fa-house"></i>Dashboard</div><span><i class="fa-solid fa-angle-down"></i></span>
+    </div>
+    <div class="flex-shrink-0 leftside_menu" id="content">
+       <div class="mobile_view" id="toggleBtn_two"><i class="fa-solid fa-xmark"></i></div>
+      <ul class="list-unstyled ps-0 navi_sidebar">
+        <li><a href="#">
+            <div class="cnt_menu_l">
+              <img src="/images/dashboard_icon.svg" alt="Dashboard">
+              <h5>Dashboard</h5>
+            </div>
+          </a></li>
+        <li><a href="#">
+            <div class="cnt_menu_l">
+              <img src="/images/plans_icon.svg" alt="Plans">
+              <h5>Plans</h5>
+            </div>
+          </a></li>
+        <li>
+          <button class="btn btn-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#orders-collapse"
+            aria-expanded="false">
+            <div class="cnt_menu_l">
+              <img src="/images/wallet_icon.svg" alt="Wallet">
+              <h5>Wallet</h5>
+            </div>
+            <span class="arrowmenu"><i class="fa-solid fa-chevron-down"></i></span>
+          </button>
+          <div class="collapse" id="orders-collapse">
+            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+              <li><a href="#" class="rounded">Settings</a></li>
+              <li><a href="#" class="rounded">Verification</a></li>
+              <li><a href="#" class="rounded">Currency Preference</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="#">
+            <div class="cnt_menu_l">
+              <img src="/images/profile_icon.svg" alt="Profile">
+              <h5>Profile</h5>
+            </div>
+          </a></li>
+        <li>
+          <a href="#">
+            <div class="cnt_menu_l">
+              <img src="/images/security_icon.svg" alt="Security">
+              <h5>Security</h5>
+            </div>
+          </a>
+        </li>
+        <li>
+          <button class="btn btn-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#referrals-collapse"
+            aria-expanded="false">
+            <div class="cnt_menu_l">
+              <img src="/images/security_icon.svg" alt="Referrals">
+              <h5>Referrals</h5>
+            </div>
+            <span class="arrowmenu"><i class="fa-solid fa-chevron-down"></i></span>
+          </button>
+          <div class="collapse" id="referrals-collapse">
+            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+              <li><a href="#" class="rounded">New...</a></li>
+              <li><a href="#" class="rounded">Profile</a></li>
+              <li><a href="#" class="rounded">Settings</a></li>
+              <li><a href="#" class="rounded">Sign out</a></li>
+            </ul>
+          </div>
+        </li>
+        <li class="active"><a href="#">
+            <div class="cnt_menu_l">
+              <img src="/images/kyc_icon.svg" alt="KYC">
+              <h5>KYC</h5>
+            </div>
+          </a></li>
+        <li>
+          <button class="btn btn-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#support-collapse"
+            aria-expanded="false">
+            <div class="cnt_menu_l">
+              <img src="/images/support_icon.svg" alt="Support">
+              <h5>Support</h5>
+            </div>
+            <span class="arrowmenu"><i class="fa-solid fa-chevron-down"></i></span>
+          </button>
+          <div class="collapse" id="support-collapse">
+            <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+              <li><a href="#" class="rounded">Settings</a></li>
+              <li><a href="#" class="rounded">Sign out</a></li>
+            </ul>
+          </div>
+        </li>
+        <li><a href="#">
+            <div class="cnt_menu_l">
+              <img src="/images/logout_icon.svg" alt="Logout">
+              <h5>Logout</h5>
+            </div>
+          </a></li>
+      </ul>
+    </div>
+    <div class="dashboard_right">
+
+      <div class="kyc_verification_s">
+
+        <h1>KYC Verification</h1>
+        <p>Complete your KYC in just 3 steps</p>
+
+        <div class="step_form_fill_top">
+          <ul class="step_list">
+            <li class="active">step 1 <span></span></li>
+            <li>step 2 <span></span></li>
+            <li>step 3 <span></span></li>
+          </ul>
+        </div>
+        <div class="kyc_form">
+          <div class="top_form_h">
+            <h6>Pan Card</h6>
+            <p>Trade requires a valid government issued ID</p>
+          </div>
+          <form>
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="form_box">
+                  <label>PAN Card Number</label>
+                  <input type="text" placeholder="">
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="form_box">
+                  <label>Confirm PAN Card number</label>
+                  <input type="text" placeholder="">
+                </div>
+              </div>
+              <div class="col-sm-12">
+                <div class="form_box">
+                  <label>Picture Upload</label>
+
+                  <div class="file-upload-container">
+                    <input type="file" id="file-input" name="file">
+                    <div class="file-upload-label">
+                      <i class="fas fa-upload"></i>
+                      <strong>Choose A File</strong>
+                      <small>Drag Or Choose Your File To Upload</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-sm-12">
+                <button class="btn">Continue to the next step</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+
+
+  <script src="js/slick.js"></script>
+  <link rel="stylesheet" href="css/slick.css">
+
+  <script>
+    (function () {
+      const accordion = document.getElementById('faq');
+      const items = accordion.querySelectorAll('.item');
+
+      function closeAll() {
+        items.forEach(it => {
+          it.classList.remove('open');
+          const btn = it.querySelector('.summary');
+          if (btn) btn.setAttribute('aria-expanded', 'false');
+        });
+      }
+      function openItem(item) {
+        item.classList.add('open');
+        const btn = item.querySelector('.summary');
+        if (btn) btn.setAttribute('aria-expanded', 'true');
+      }
+      accordion.addEventListener('click', function (e) {
+        const summary = e.target.closest('.summary');
+        if (!summary) return;
+        const item = summary.closest('.item');
+        if (item.classList.contains('open')) {
+          item.classList.remove('open');
+          summary.setAttribute('aria-expanded', 'false');
+        } else {
+          closeAll();
+          openItem(item);
+        }
+      });
+      accordion.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          const summary = e.target.closest('.summary');
+          if (!summary) return;
+          e.preventDefault();
+          summary.click();
+        }
+      });
+      document.addEventListener('DOMContentLoaded', function () {
+        const firstOpen = accordion.querySelector('.item.open');
+        if (firstOpen) {
+          firstOpen.querySelector('.summary').setAttribute('aria-expanded', 'true');
+        }
+      });
+    })();
+  </script>
+
+
+
+</body>
+
+</html>

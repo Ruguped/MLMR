@@ -4,7 +4,7 @@ export function Footer({}) {
   <div className="container">
     <div className="footer_top_s">
       <div className="logo">
-        <a href="#"><img src="images/dametrade_logo.png" alt="logo" /></a>
+        <a href="#"><img src="/images/dametrade_logo.png" alt="logo" /></a>
       </div>
       <div className="footer_cnt_r">
         <p>Lorem Ipsum&nbsp;is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
