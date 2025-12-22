@@ -49,10 +49,11 @@ export default function StepSelfie({ formData, updateField, setCurrentStep }) {
       <p>Complete your KYC in just 3 steps</p>
       <div className="step_form_fill_top">
         <ul className="step_list">
-          <li className="active">step 1 <span /></li>
-          <li className="active">step 2 <span /></li>
+          <li className="active" onClick={() => setCurrentStep(1)}>step 1 <span /></li>
+          <li className="active" onClick={() => setCurrentStep(2)}>step 2 <span /></li>
           <li className="active">step 3 <span /></li>
         </ul>
+        
       </div>
       <div className="kyc_form">
         <div className="top_form_h">
