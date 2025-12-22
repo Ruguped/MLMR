@@ -25,10 +25,10 @@ export default function StepSelfie({ formData, updateField, setCurrentStep }) {
       const payload = new FormData();
       payload.append('panNumber', formData.panNumber);
       payload.append('aadhaarNumber', formData.aadhaarNumber);
-      payload.append('panCardImage', formData.panCardImage);
-      payload.append('aadharFrontImage', formData.aadharFrontImage);
-      payload.append('aadharBackImage', formData.aadharBackImage);
-      payload.append('selfieImage', formData.selfieImage);
+      payload.append('panCard', formData.panCardImage);
+      payload.append('aadhaarFront', formData.aadharFrontImage);
+      payload.append('aadhaarBack', formData.aadharBackImage);
+      payload.append('selfie', formData.selfieImage);
 
       const res = await submitKyc(payload);
 

@@ -21,7 +21,9 @@ export const profile = () => api.get('/api/user/profile');
 //======================support ticket apis============================
 
 //post request to create ticket
-export const createTicket =  (payload) => api.post('/api/support/tickets', payload);
+export const createTicket =  (payload) => api.post('/api/support/tickets', payload,{
+    headers: { 'Content-Type': 'multipart/form-data' }
+});
 export const getTickets = (page = 1) => api.get(`/api/support/tickets?page=${page}`);
 
 //tickets individual getting 
@@ -30,12 +32,16 @@ export const getIndividualTicket = (ticketId) => api.get(`/api/support/tickets/$
 //send message to ticket individual
 export const sendTicketMessage = (ticketId, payload) => api.post(`/api/support/tickets/${ticketId}/messages`, payload);
 
+export const closeIndividualTicket = (ticketId) => api.patch(`/api/support/tickets/${ticketId}/close`);
+
+export const reopenIndividualTicket = (ticketId) => api.patch(`/api/support/tickets/${ticketId}/reopen`);
+
 
 //======================kyc APi bhai============================
 
 
 //post submit kyc {panNumber,aadharNumber,panCardImage,aadharFrontImage,aadharBackImage}-5fileds 3 files 2 numbers 
-export const submitKyc = (payload) => api.post('/api/user/kyc/submit', payload, {
+export const submitKyc = (payload) => api.post('/api/kyc/submit', payload, {
     headers: { 'Content-Type': 'multipart/form-data' }
 });
 {/*

@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createTicket, getTickets } from '../../../libs/authApi.js';
 import { useToast } from '../../../store/toastStore.js';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 
 
@@ -60,7 +60,11 @@ export default function Support() {
   } = user;
 
   const toast = useToast();
+  const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+
+
 
 
 
@@ -68,6 +72,8 @@ export default function Support() {
     email: z.string().email("Invalid email"),
     subject: z.string().min(5, "Subject too short"),
     message: z.string().min(20, "Description too short"),
+    category: z.string().min(1, "Category is required"),
+    supportingDocuments: z.any().optional(),
   });
 
   const {
@@ -85,9 +91,20 @@ export default function Support() {
   async function onSubmit(payload) {
     setIsSubmitting(true);
     try {
-      await createTicket(payload);
+      console.log("supportingDocuments:", payload.supportingDocuments);
+      const formData = new FormData();
+      formData.append("email", payload.email);
+      formData.append("subject", payload.subject);
+      formData.append("message", payload.message);
+      formData.append("category", payload.category);
+      if (payload.supportingDocuments?.length > 0) {
+        formData.append('supportingDocuments', payload.supportingDocuments[0]);
+      }
+      await createTicket(formData);
       toast.success("Ticket created successfully");
       reset();
+      // Refresh tickets list
+      queryClient.invalidateQueries({ queryKey: ['tickets'] });
     } catch (error) {
       console.error("Error creating ticket:", error);
       toast.error("Failed to create ticket");
@@ -188,23 +205,23 @@ export default function Support() {
               </tbody>
             </table>
             {/* Pagination - add after </table> */}
-              <nav aria-label="Tickets pagination" className="mt-3">
-                <ul className="pagination justify-content-center">
-                  <li className={`page-item ${pagination.currentPage === 1 ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => setCurrentPage(prev => prev - 1)} disabled={pagination.currentPage === 1}>
-                      Previous
-                    </button>
-                  </li>
-                  <li className="page-item disabled">
-                    <span className="page-link">Page {pagination.currentPage} of {pagination.totalPages}</span>
-                  </li>
-                  <li className={`page-item ${pagination.currentPage === pagination.totalPages ? 'disabled' : ''}`}>
-                    <button className="page-link" onClick={() => setCurrentPage(prev => prev + 1)} disabled={pagination.currentPage === pagination.totalPages}>
-                      Next
-                    </button>
-                  </li>
-                </ul>
-              </nav>
+            <nav aria-label="Tickets pagination" className="mt-3">
+              <ul className="pagination justify-content-center">
+                <li className={`page-item ${pagination.currentPage === 1 ? 'disabled' : ''}`}>
+                  <button className="page-link" onClick={() => setCurrentPage(prev => prev - 1)} disabled={pagination.currentPage === 1}>
+                    Previous
+                  </button>
+                </li>
+                <li className="page-item disabled">
+                  <span className="page-link">Page {pagination.currentPage} of {pagination.totalPages}</span>
+                </li>
+                <li className={`page-item ${pagination.currentPage === pagination.totalPages ? 'disabled' : ''}`}>
+                  <button className="page-link" onClick={() => setCurrentPage(prev => prev + 1)} disabled={pagination.currentPage === pagination.totalPages}>
+                    Next
+                  </button>
+                </li>
+              </ul>
+            </nav>
           </div>
         </div>
         <div className="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
@@ -219,6 +236,18 @@ export default function Support() {
                       className={errors.email ? "is-invalid" : ""}
                       type="email" placeholder="Enter your email" />
                     {errors.email && <span className="text-danger small">{errors.email.message}</span>}
+                  </div>
+                  <div className="control_input">
+                    <lable>Category</lable>
+                    <select {...register("category")}>
+                      <option value="" disabled>Select Category</option>
+                      <option value="technical">Technical</option>
+                      <option value="billing">Billing</option>
+                      <option value="account">Account</option>
+                      <option value="general">General</option>
+                      <option value="kyc">KYC</option>
+                    </select>
+                    {errors.category && <span className="text-danger small">{errors.category.message}</span>}
                   </div>
                   <div className="control_input">
                     <lable>Subject</lable>
@@ -248,8 +277,8 @@ export default function Support() {
                   <div className="control_input">
                     <lable>Supporting documents (Attach)</lable>
                     <input
-                      {...register("supportingDocuments")}
-                      type="file" accept=".jpg,.png,.pdf" />
+                      type="file" accept=".jpg,.png,.pdf"
+                      {...register("supportingDocuments")} />
                     {errors.supportingDocuments && <span className="text-danger small">{errors.supportingDocuments.message}</span>}
                   </div>
                 </div>

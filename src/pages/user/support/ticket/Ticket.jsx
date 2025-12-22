@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getIndividualTicket, sendTicketMessage } from '../../../../libs/authApi.js';
+import { getIndividualTicket, sendTicketMessage,closeIndividualTicket,reopenIndividualTicket } from '../../../../libs/authApi.js';
 import useUserStore from '../../../../store/userStore.js';
 import { useToast } from '../../../../store/toastStore.js';
 
@@ -13,6 +13,8 @@ export default function Ticket() {
 
   const [newMessage, setNewMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+  const [isReopening, setIsReopening] = useState(false);
 
   const { data: ticketData, isLoading, isError } = useQuery({
     queryKey: ['ticket', id],
@@ -35,12 +37,48 @@ export default function Ticket() {
       toast.success('Message sent!');
       setNewMessage('');
       // Refetch ticket to get updated messages
-      queryClient.invalidateQueries(['ticket', id]);
+      queryClient.invalidateQueries({
+        queryKey: ['ticket', id]
+      });
     } catch (error) {
       console.error('Error sending message:', error);
       toast.error('Failed to send message');
     } finally {
       setIsSending(false);
+    }
+  }
+
+  async function handleCloseTicket(){
+    setIsClosing(true);
+    try {
+      await closeIndividualTicket(id);
+      toast.success('Ticket closed!');
+      // Refetch ticket to get updated status
+      queryClient.invalidateQueries({
+        queryKey: ['ticket', id]
+      });
+    } catch (error) {
+      console.error('Error closing ticket:', error);
+      toast.error('Failed to close ticket');
+    } finally {
+      setIsClosing(false);
+    }
+  }
+
+  async function handleReopenTicket(){
+    setIsReopening(true);
+    try {
+      await reopenIndividualTicket(id);
+      toast.success('Ticket reopened!');
+      // Refetch ticket to get updated status
+      queryClient.invalidateQueries({
+        queryKey: ['ticket', id]
+      });
+    } catch (error) {
+      console.error('Error reopening ticket:', error);
+      toast.error('Failed to reopen ticket');
+    } finally {
+      setIsReopening(false);
     }
   }
 
@@ -71,8 +109,8 @@ export default function Ticket() {
         ))}
       </div>
 
-      {/* Send Message - only if ticket is open */}
-      {ticket.canSendMessage && !ticket.isClosed && (
+      {/* Send Message - only if ticket is open or in-progress */}
+      {(ticket.status === 'open' || ticket.status === 'in-progress') && (
         <div className="profile_form mt-3">
           <form onSubmit={handleSendMessage}>
             <div className="control_input">
@@ -86,16 +124,20 @@ export default function Ticket() {
             <button className="btn" type="submit" disabled={isSending || !newMessage.trim()}>
               {isSending ? 'Sending...' : 'Send Message'}
             </button>
+            <button className="btn" onClick={handleCloseTicket} disabled={isClosing}>
+              {isClosing ? 'Closing...' : 'Close Ticket'}
+            </button>
           </form>
         </div>
       )}
 
-      {ticket.isClosed && (
+      {ticket.status === 'closed' && (
         <div className="ticket_resolved">
           <h4>This ticket has been resolved</h4>
-          <button className="btn">Closed</button>
+          <button className="btn" onClick={handleReopenTicket} disabled={isReopening}>Reopen</button>
+
         </div>
       )}
     </div>
-  </div>;
+  </div>;``
 }
