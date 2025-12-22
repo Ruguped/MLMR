@@ -64,7 +64,7 @@ function App() {
               <Route path="logout" />
               <Route path="settings" />
               <Route path="deposit" element={<Deposit/>}/>
-              <Route path="withdraw" element={<Withdraw/>}/>
+              <Route path="withdraw" />
             </Route>
           </Route>
         </Route>

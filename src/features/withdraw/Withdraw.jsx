@@ -2,13 +2,30 @@ import React, { useState, useEffect } from "react";
 import { withdrawOtp } from "../../libs/authApi.js";
 import { useToast } from "../../store/toastStore.js";
 import AddAccountPopUp from "./AddAccountPopUp";
+import useUserStore from "../../store/userStore.js";
 
 
 export default function Withdraw() {
   const toast = useToast();
   const [showAddAccountPopUp, setShowAddAccountPopUp] = useState(false);
 
+  const [selectedAccount, setSelectedAccount] = useState(null);
+
   const [resendCountdown, setResendCountdown] = useState(0);
+
+
+
+  const [formData, setFormData] = useState({
+  amount: "",
+  otp: "",
+  method: "online bank transfer"  //abhi toh default hai
+});
+
+  
+
+
+
+
   //=====countdown timer for otp resend=====//
   useEffect(() => {
     if (resendCountdown <= 0) return;
@@ -36,6 +53,19 @@ export default function Withdraw() {
   }
 
 
+  // const {user} = useUserStore();
+  //const {withdrwalAccounts} = user
+ //async function handleSubmit(e){
+// e.preventDefault();
+// if (!formData.amount || !formData.otp || !selectedAccount) {
+ // toast.error("Please fill all fields");
+ // return;
+// }  const payload = {
+//    ...formData,
+//   ...selectedAccount}
+//phir api ka logic try catch then toast success or error
+//
+// }
 
 
   return (
@@ -75,16 +105,16 @@ export default function Withdraw() {
         <h2>Withdraw</h2>
         <div className="qur_code_inquery">
 
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="info_input">
               <div className="d-flex">
-                <input type="text" placeholder="Amount" />
+                <input name="amount" value={formData.amount} onChange={handleChange} placeholder="Amount" />
                 <span>Max</span>
               </div>
             </div>
             <div className="info_input">
               <div className="d-flex">
-                <input type="text" placeholder="OTP" />
+                <input name="otp" value={formData.otp} onChange={handleChange} placeholder="OTP" />
                 <span onClick={handleSendOtp} style={{ cursor: resendCountdown > 0 ? 'not-allowed' : 'pointer' }}>{`${resendCountdown > 0 ? `(${resendCountdown}s)` : 'Get OTP'}`}</span>
               </div>
             </div>
@@ -94,21 +124,29 @@ export default function Withdraw() {
               </select>
             </div>
             <div className="info_input">
-              <select>
-                <option value="" disabled>Select bank</option>
-                <option>Yes Bank (1234560)</option>
-                <option onClick={() => {console.log('Add New Account')}}>+ Add New Account</option>
+              {/*Simple logic yaha to change selectedaccount okay*/}
+              <select value={selectedAccount?.accountNumber || ""}
+                onChange={(e) => {
+                  const account = withdrawalAccounts.find(acc => acc.accountNumber === e.target.value);
+                  setSelectedAccount(account || null);
+                }}>
+                <option value="" disabled>Select a bank account</option>
+                {/*withdrawalAccounts.map((account, index) => (
+                    <option key={index} value={account.accountNumber}>
+                      {account.bankName} ({account.accountNumber})
+                    </option>
+                  ))*/}
               </select>
-              <span onClick={() => setShowAddAccountPopUp(prev=>!prev)}>+ Add New Account</span>
+              <span onClick={() => setShowAddAccountPopUp(prev => !prev)}>+ Add New Account</span>
             </div>
 
             <div className="bankdel">
               <label className="mb-2">bank details</label>
 
-              <legend>Bank name <span>---------</span></legend>
-              <legend>Account Name <span>---------</span></legend>
-              <legend>Account Number <span>---------</span></legend>
-              <legend>IFSC Code <span>---------</span></legend>
+              <legend>Bank name <span>{selectedAccount?.bankName || "---------"}</span></legend>
+              <legend>Account Name <span>{selectedAccount?.accountHolderName || "---------"}</span></legend>
+              <legend>Account Number <span>{selectedAccount?.accountNumber || "---------"}</span></legend>
+              <legend>IFSC Code <span>{selectedAccount?.ifscCode || "---------"}</span></legend>
             </div>
 
             <button className="btn">Submit</button>
