@@ -12,8 +12,11 @@ export default function Deposit() {
   const [isSubmitting,setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     amount: '',
-    transactionId: '',
-    file: null
+    transactionHash: '',
+    confirmTransactionHash: '',
+    walletAddress: '',
+    proofImage : null,
+    network : ''
   })
 
   const handleChange = (e) => {
@@ -27,8 +30,12 @@ export default function Deposit() {
     console.log(formData);
     const payload = new FormData();
     payload.append('amount', formData.amount);
-    payload.append('transactionId', formData.transactionId);
-    payload.append('file', formData.file);
+    payload.append('transactionHash', formData.transactionHash);
+    payload.append('confirmTransactionHash', formData.confirmTransactionHash);
+    payload.append('walletAddress', formData.walletAddress);
+    payload.append('network', formData.network);
+    payload.append('currency', 'USDT');
+    payload.append('depositProofImage', formData.proofImage);
     try {
       const res = await deposit(payload);
       if (res?.data?.success) {
@@ -82,16 +89,30 @@ export default function Deposit() {
                 <img src="/images/qrcode_screen.svg" />
               </div>
               <div className="copycode">
-                bhaikiupi@okhdfc <button type="button"><i className="fa-regular fa-clone"></i></button>
+                0x35F90CA8594aAFeaaa117f90 <button type="button"><i className="fa-regular fa-clone"></i></button>
+              </div>
+              <div className="info_input">
+                <select onChange={handleChange} name="network" id="">
+                  <option value="" disabled>Select Chain</option>
+                  <option value="BEP20">BEP20</option>
+                  <option value="ERC20">ERC20</option>
+                  <option value="TRC20">TRC20</option>
+                </select>
               </div>
               <div className="info_input">
                 <input type="text" placeholder="Amount" onChange={handleChange} name="amount" value={formData.amount} />
               </div>
               <div className="info_input">
-                <input type="text" placeholder="Transaction ID" onChange={handleChange} name="transactionId" value={formData.transactionId} />
+                <input type="text" placeholder="Your Wallet Address" onChange={handleChange} name="walletAddress" value={formData.walletAddress} />
               </div>
               <div className="info_input">
-                <input type="file" placeholder="File upload" onChange={(e) => setFormData({ ...formData, file: e.target.files[0] })} name="file" />
+                <input type="password" placeholder="Transaction Hash" onChange={handleChange} name="transactionHash" value={formData.transactionHash} />
+              </div>
+              <div className="info_input">
+                <input type="text" placeholder="Confirm Transaction Hash" onChange={handleChange} name="confirmTransactionHash" value={formData.confirmTransactionHash} />
+              </div>
+              <div className="info_input">
+                <input type="file" placeholder="File upload" onChange={(e) => setFormData({ ...formData, proofImage: e.target.files[0] })} name="proofImage" />
               </div>
               <button className="btn" type="submit" disabled={isSubmitting}>Submit</button>
 

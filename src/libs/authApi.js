@@ -57,7 +57,7 @@ export const submitKyc = (payload) => api.post('/api/kyc/submit', payload, {
 
 //deposit api
 
-export const deposit = (payload) => api.post('/api/user/deposit', payload, {
+export const deposit = (payload) => api.post('/api/wallet/deposit-request', payload, {
     headers: { 'Content-Type': 'multipart/form-data' }
 });
 
