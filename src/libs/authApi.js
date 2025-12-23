@@ -61,7 +61,12 @@ export const deposit = (payload) => api.post('/api/wallet/deposit-request', payl
     headers: { 'Content-Type': 'multipart/form-data' }
 });
 
-
+// Get deposit history with optional status filter and pagination
+export const getMyDeposits = (page = 1, status = '') => {
+    const params = new URLSearchParams({ page, limit: 10 });
+    if (status) params.append('status', status);
+    return api.get(`/api/wallet/my-deposits?${params.toString()}`);
+};
 
 //withdraw api
 //otp
