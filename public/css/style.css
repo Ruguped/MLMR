@@ -967,7 +967,7 @@ section.packages_section h2 {
 }
 
 .packages_block ul li {
-    font-size: 20px;
+    font-size: 15px;
 }
 
 .packages_block ul li .fa-check {
@@ -3203,7 +3203,7 @@ a.analyticsbtn {
     }
 
     .packages_block ul li {
-        font-size: 16px;
+        font-size: 15px;
     }
 
     .top_package_cnt h3 {

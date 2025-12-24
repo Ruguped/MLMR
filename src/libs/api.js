@@ -10,7 +10,7 @@ const showToast = (type, message) => {
 const config = {
   // Using empty baseURL so requests go through Vite proxy (see vite.config.js)
   // The proxy forwards /api/* requests to the ngrok backend
-  baseURL: import.meta.env.VITE_API_URL || 'http://192.168.1.3:3750',
+  baseURL: import.meta.env.VITE_API_URL || 'http://10.25.145.241:3750',
   timeout: 30000,
 };
 
