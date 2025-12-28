@@ -2,9 +2,15 @@
 
 import { useState } from 'react';
 import DepositHistory from './history/DepositHistory';
+import useUserStore from '../../../store/userStore';
 
 export default function Wallet() {
   const [showDepositHistory, setShowDepositHistory] = useState(false);
+  const { user } = useUserStore();
+
+
+
+  const { depositWallet, investmentWallet, returnsWallet, totalCommission } = user;
 
   return <div className="dashboard_right">
     <div className="top_header_dash">
@@ -36,16 +42,15 @@ export default function Wallet() {
         <ul>
           <li>
             <h4>Deposit Amount</h4>
-            <button className="btn">View More</button>
-          </li>
+            ${depositWallet}          </li>
           <li>
             <h4>ROI Amount</h4>
-            <button className="btn">View More</button>
+            ${returnsWallet}
           </li>
           <li>
             <h4>Withdrawable Amount
               (ROI + Commission)</h4>
-            <button className="btn">View More</button>
+            ${returnsWallet + totalCommission}
           </li>
         </ul>
       </div>

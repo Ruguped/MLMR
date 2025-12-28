@@ -17,6 +17,30 @@ import Ticket from './pages/user/support/ticket/Ticket.jsx';
 import Kyc from './pages/user/kyc/Kyc.jsx';
 import Deposit from './features/deposit/Deposit.jsx';
 import Withdraw from './features/withdraw/Withdraw.jsx';
+import api from './libs/api';
+import { useEffect } from 'react';
+
+// Simple components to seed/manage DB on mount
+function SeedPlatinum() {
+  useEffect(() => {
+    api.post('/api/seed/platinum').then(res => console.log(res.data));
+  }, []);
+  return <div>Seeding Platinum...</div>;
+}
+
+function SeedCleanup() {
+  useEffect(() => {
+    api.delete('/api/seed/cleanup').then(res => console.log(res.data));
+  }, []);
+  return <div>Cleaning up seed data...</div>;
+}
+
+function SeedStatus() {
+  useEffect(() => {
+    api.get('/api/seed/status').then(res => console.log(res.data));
+  }, []);
+  return <div>Fetching seed status...</div>;
+}
 
 // ========== REACT QUERY SETUP ==========
 // QueryClient is like a "brain" that stores all your fetched data
@@ -30,7 +54,7 @@ const queryClient = new QueryClient({
       // staleTime: How long data is considered "fresh" (won't refetch)
       // After 5 minutes, React Query will refetch in the background
       staleTime: 5 * 60 * 1000,  // 5 minutes
-        
+
       // retry: How many times to retry failed requests
       retry: 1,
 
@@ -53,18 +77,21 @@ function App() {
           <Route element={<AuthRequired />}>
             <Route path='user' element={<UserLayout />}>
               <Route index element={<Dashboard />} />
-              <Route path="plans" element={<Plans/>}/>
-              <Route path="wallet" element={<Wallet/>}/>
-              <Route path="profile" element={<Profile/>}/>
-              <Route path="security" element={<Security/>}/>
-              <Route path="referrals" element={<Referrals/>}/>
-              <Route path="kyc" element={<Kyc/>}/>
-              <Route path="support" element={<Support/>}/>
-              <Route path="support/tickets/:id" element={<Ticket/>}/>
+              <Route path="plans" element={<Plans />} />
+              <Route path="wallet" element={<Wallet />} />
+              <Route path="profile" element={<Profile />} />
+              <Route path="security" element={<Security />} />
+              <Route path="referrals" element={<Referrals />} />
+              <Route path="kyc" element={<Kyc />} />
+              <Route path="support" element={<Support />} />
+              <Route path="support/tickets/:id" element={<Ticket />} />
               <Route path="logout" />
               <Route path="settings" />
-              <Route path="deposit" element={<Deposit/>}/>
+              <Route path="deposit" element={<Deposit />} />
               <Route path="withdraw" />
+              <Route path="seed/platinum" element={<SeedPlatinum />} />
+              <Route path="seed/cleanup" element={<SeedCleanup />} />
+              <Route path="seed/status" element={<SeedStatus />} />
             </Route>
           </Route>
         </Route>

@@ -1,0 +1,113 @@
+/* ============================================
+   My Plans - Additional Styles Only
+   Base styles inherited from style.css (.packages_block)
+   ============================================ */
+
+/* Status Badge - New element not in BuyPlans */
+.status_badge {
+  display: inline-block;
+  padding: 5px 18px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 12px 0;
+}
+
+.status_badge.active {
+  background: linear-gradient(135deg, #28a745, #20c997);
+  color: #fff;
+}
+
+.status_badge.completed {
+  background: linear-gradient(135deg, #6f42c1, #805ad5);
+  color: #fff;
+}
+
+/* Earning Progress Section - New element */
+.earning_progress {
+  margin-top: 20px;
+  padding: 12px 15px;
+  background: #f8f9fa;
+  border-radius: 10px;
+}
+
+.progress_info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.progress_track {
+  width: 100%;
+  height: 8px;
+  background: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress_fill {
+  height: 100%;
+  background: linear-gradient(90deg, #1053C1, #007bff);
+  border-radius: 10px;
+  transition: width 0.4s ease;
+}
+
+.progress_fill.completed {
+  background: linear-gradient(90deg, #6f42c1, #805ad5);
+}
+
+.progress_fill.platinum {
+  background: linear-gradient(90deg, #0E7490, #4ECEF2);
+}
+
+/* Plan-specific progress colors */
+.silver_block .progress_fill {
+  background: linear-gradient(90deg, #9ca3af, #6b7280);
+}
+
+.gold_block .progress_fill {
+  background: linear-gradient(90deg, #D4B61C, #FFD500);
+}
+
+.diamond_block .progress_fill {
+  background: linear-gradient(90deg, #2047b1, #86A5FF);
+}
+
+.vip_block .progress_fill {
+  background: linear-gradient(90deg, #6b00bf, #C072FD);
+}
+
+/* Remaining Box - New element */
+.remaining_box {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  padding: 10px 15px;
+  background: #f1f5f9;
+  border-radius: 8px;
+}
+
+.remaining_box span {
+  font-size: 13px;
+  color: #666;
+}
+
+.remaining_box strong {
+  font-size: 18px;
+  font-weight: 800;
+  color: #222;
+}
+
+/* Purchase Date Footer - New element */
+.purchase_date {
+  margin-top: 15px;
+  padding-top: 12px;
+  border-top: 1px solid #eee;
+  font-size: 12px;
+  color: #888;
+}

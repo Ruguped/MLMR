@@ -36,9 +36,9 @@ export function Sidebar({
         </button>
         <div className="collapse" id="orders-collapse">
           <ul className="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-            <li><a href="#" className="rounded">Settings</a></li>
-            <li><a href="#" className="rounded">Verification</a></li>
-            <li><a href="#" className="rounded">Currency Preference</a></li>
+            <li><span className="rounded">Settings</span></li>
+            <li><span className="rounded">Verification</span></li>
+            <li><span className="rounded">Currency Preference</span></li>
           </ul>
         </div>
       </Link>
@@ -67,8 +67,8 @@ export function Sidebar({
         </button>
         <div className="collapse" id="account-collapse">
           <ul className="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-            <li><a href="#" className="rounded">Profile</a></li>
-            <li><a href="#" className="rounded">Settings</a></li>
+            <li><span className="rounded">Profile</span></li>
+            <li><span className="rounded">Settings</span></li>
           </ul>
         </div></Link>
       </li>
@@ -88,7 +88,7 @@ export function Sidebar({
         </button>
         <div className="collapse" id="account-collapse">
           <ul className="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-            <li><a href="#" className="rounded">Settings</a></li>
+            <li><span className="rounded">Settings</span></li>
           </ul>
         </div></Link>
       </li>

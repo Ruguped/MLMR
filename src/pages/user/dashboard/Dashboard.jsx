@@ -13,7 +13,7 @@ export default function Dashboard() {
   email,
   role,
   isVerified,
-  currentPlan,
+  highestPlan,
   verificationStatus,
   sponsorId,
   sponsorUsername,
@@ -33,6 +33,7 @@ export default function Dashboard() {
   depositWallet,
   investmentWallet,
   returnsWallet,
+  //income wala ROI khud ka plan ke hisab se calculate karna hai
   isActive,
   isBanned,
   referralsByPlanL1,
@@ -90,9 +91,9 @@ console.log( 'there are referralsby plan L1', referralsByPlanL1, 'referralsByPla
             </div>
             <div className="select_price">
               <div className="dashboardsummary_bottom">
-                <h4>{currentPlan}<span className="price">
-                  {currentPlan === 'Basic' ? '$50- $1k' : currentPlan === 'Silver' ? '$200- $2k' :
-                   currentPlan === 'Gold' ? '$1k- $5k' : currentPlan === 'Platinum' ? '$2k- $10k' : currentPlan === 'Diamond' ? '$4k- $30k' : currentPlan === 'VIP' ? '$6k- $50k' : 'INACTIVE'}
+                <h4>{highestPlan}<span className="price">
+                  {highestPlan === 'Basic' ? '$50- $1k' : highestPlan === 'Silver' ? '$200- $2k' :
+                   highestPlan === 'Gold' ? '$1k- $5k' : highestPlan === 'Platinum' ? '$2k- $10k' : highestPlan === 'Diamond' ? '$4k- $30k' : highestPlan === 'VIP' ? '$6k- $50k' : 'INACTIVE'}
                   </span></h4><a className="btn" href="#">View Plan</a>
               </div>
             </div>

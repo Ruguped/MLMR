@@ -927,6 +927,16 @@ section.packages_section h2 {
     color: #000;
 }
 
+.plan_section h2 button {
+    padding: 10px 20px;
+    font-size: 26px;
+    font-weight: bold;
+    border:none;
+    border-bottom: 3px solid #1953e4;
+    background-color: transparent;
+    cursor: pointer;
+}
+
 .top_package_cnt h3 {
     padding-top: 10px;
     margin: 0px;
