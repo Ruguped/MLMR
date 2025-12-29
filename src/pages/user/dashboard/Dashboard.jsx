@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import useUserStore from '../../../store/userStore.js'
 import {Link} from 'react-router-dom'
-
+import SideProfile from '../../../components/layout/SideProfile'
 
 
 export default function Dashboard() {
@@ -58,31 +58,7 @@ console.log( 'there are referralsby plan L1', referralsByPlanL1, 'referralsByPla
 
   return (
     <div className="dashboard_right">
-      <div className="top_header_dash">
-        <div className="user_profile">
-          <div className="user_img"><img src="/images/user_dash_profile.svg" alt="user" height="54px" width="54px" className="round_img" /></div>
-          <div className="user_profile_cnt">
-            <h3>{username}</h3>
-            <ul className="user_social">
-              <li><a href="#"><img src="/images/user_social.svg" alt="social" /></a></li>
-              <li><a href="#"><img src="/images/user_social2.svg" alt="social" /></a></li>
-            </ul>
-          </div>
-        </div>
-        <div className="profile_id_s">
-          <div className="profile_id">
-            <span>UID :</span>
-            <div>{_id}<img src="/images/uid_icon.svg" className="m-1" alt="icon" /></div>
-          </div>
-          <div className="profile_id">
-            <span>Referral ID :</span>
-            <div>{referralCode}<img src="/images/uid_icon.svg" className="m-1" alt="icon" /></div>
-          </div>
-          <div className="profile_id kycstatus">
-            <span>KYC Status</span><a className="text-success" href="#">{kycStatus.toUpperCase()}</a>
-          </div>
-        </div>
-      </div>
+      <SideProfile />
       <div className="estimated_balance">
         <div className="div_tag">
           <div className="balance_chart_left">
@@ -94,7 +70,7 @@ console.log( 'there are referralsby plan L1', referralsByPlanL1, 'referralsByPla
                 <h4>{highestPlan}<span className="price">
                   {highestPlan === 'Basic' ? '$50- $1k' : highestPlan === 'Silver' ? '$200- $2k' :
                    highestPlan === 'Gold' ? '$1k- $5k' : highestPlan === 'Platinum' ? '$2k- $10k' : highestPlan === 'Diamond' ? '$4k- $30k' : highestPlan === 'VIP' ? '$6k- $50k' : 'INACTIVE'}
-                  </span></h4><a className="btn" href="#">View Plan</a>
+                  </span></h4><Link className="btn" to="/user/plans" state={{ from: 'dashboard' }}>View Plan</Link>
               </div>
             </div>
           </div>

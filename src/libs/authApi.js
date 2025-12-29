@@ -74,3 +74,7 @@ export const withdrawOtp = () => api.get('/api/user/withdraw-otp');
 export const withdraw = (payload) => api.post('/api/user/withdraw', payload, {
     headers: { 'Content-Type': 'multipart/form-data' }
 });
+
+
+
+export const buyPlan = (payload) => api.post('/api/Investment/buy', payload);
