@@ -1,11 +1,52 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import api from '../../../libs/api';
 import SideProfile from "../../../components/layout/SideProfile";
 
 export default function Referrals() {
+  const [page, setPage] = useState(1);
+  const [level, setLevel] = useState('all');
+  const [order, setOrder] = useState('newest');
+
+  // Fetch commission history with pagination and filters
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['commission-history', page, level, order],
+    queryFn: async () => {
+      const response = await api.get('/api/referral/commission-history', {
+        params: {
+          page,
+          limit: 10,
+          level,
+          sortOrder: order
+        }
+      });
+      return response.data;
+    },
+    keepPreviousData: true, // Smooth UX when changing pages
+  });
+
+
+
+
   return <div className="dashboard_right">
     <SideProfile />
     <div className="wallect_s">
-      <h2><img src="/images/wallet_vector.svg" />Referral</h2>
+      <h2><img src="/images/wallet_vector.svg" />Referral
+        <select value={level} onChange={e => { setLevel(e.target.value); setPage(1); }}>
+          <option value='all'>All</option>
+          <option value='1'>L1</option>
+          <option value='2'>L2</option>
+          <option value='3'>L3</option>
+          <option value='4'>L4</option>
+          <option value='5'>L5</option>
+          <option value='6'>L6</option>
+          <option value='7'>L7</option>
+        </select>
+        <select value={order} onChange={e => { setOrder(e.target.value); setPage(1); }}>
+          <option value='newest'>Newest</option>
+          <option value='oldest'>Oldest</option>
+        </select>
+      </h2>
       <div className="table-responsive">
         <table>
           <thead>
@@ -17,119 +58,53 @@ export default function Referrals() {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>
-                <div className="user_profile">
-                  <div className="user_img"><img src="/images/user_dash_profile.svg" alt="user" className="round_img" />
-                  </div>
-                  <div className="user_profile_cnt">
-                    <h3>Raj</h3>
-                    <p>Level 1</p>
-                  </div>
-                </div>
-              </td>
-              <td>Silver</td>
-              <td>5</td>
-              <td className="green">688.664&nbsp;USD</td>
-            </tr>
-            <tr>
-              <td>
-                <div className="user_profile">
-                  <div className="user_img"><img src="/images/user_dash_profile.svg" alt="user" className="round_img" />
-                  </div>
-                  <div className="user_profile_cnt">
-                    <h3>Raj</h3>
-                    <p>Level 1</p>
-                  </div>
-                </div>
-              </td>
-              <td>Silver</td>
-              <td>5</td>
-              <td className="green">688.664&nbsp;USD</td>
-            </tr>
-            <tr>
-              <td>
-                <div className="user_profile">
-                  <div className="user_img"><img src="/images/user_dash_profile.svg" alt="user" className="round_img" />
-                  </div>
-                  <div className="user_profile_cnt">
-                    <h3>Raj</h3>
-                    <p>Level 1</p>
-                  </div>
-                </div>
-              </td>
-              <td>Silver</td>
-              <td>5</td>
-              <td className="green">688.664&nbsp;USD</td>
-            </tr>
-            <tr>
-              <td>
-                <div className="user_profile">
-                  <div className="user_img"><img src="/images/user_dash_profile.svg" alt="user" className="round_img" />
-                  </div>
-                  <div className="user_profile_cnt">
-                    <h3>Raj</h3>
-                    <p>Level 1</p>
-                  </div>
-                </div>
-              </td>
-              <td>Silver</td>
-              <td>5</td>
-              <td className="green">688.664&nbsp;USD</td>
-            </tr>
-            <tr>
-              <td>
-                <div className="user_profile">
-                  <div className="user_img"><img src="/images/user_dash_profile.svg" alt="user" className="round_img" />
-                  </div>
-                  <div className="user_profile_cnt">
-                    <h3>Raj</h3>
-                    <p>Level 1</p>
-                  </div>
-                </div>
-              </td>
-              <td>Silver</td>
-              <td>5</td>
-              <td className="green">688.664&nbsp;USD</td>
-            </tr>
-            <tr>
-              <td>
-                <div className="user_profile">
-                  <div className="user_img"><img src="/images/user_dash_profile.svg" alt="user" className="round_img" />
-                  </div>
-                  <div className="user_profile_cnt">
-                    <h3>Raj</h3>
-                    <p>Level 1</p>
-                  </div>
-                </div>
-              </td>
-              <td>Silver</td>
-              <td>5</td>
-              <td className="green">688.664&nbsp;USD</td>
-            </tr>
-            <tr>
-              <td>
-                <div className="user_profile">
-                  <div className="user_img"><img src="/images/user_dash_profile.svg" alt="user" className="round_img" />
-                  </div>
-                  <div className="user_profile_cnt">
-                    <h3>Raj</h3>
-                    <p>Level 1</p>
-                  </div>
-                </div>
-              </td>
-              <td>Silver</td>
-              <td>5</td>
-              <td className="green">688.664&nbsp;USD</td>
-            </tr>
+            {isLoading ? (
+              <tr><td colSpan="4" className="text-center">Loading...</td></tr>
+            ) : error ? (
+              <tr><td colSpan="4" className="text-center text-danger">Error loading data</td></tr>
+            ) : data?.history?.length === 0 ? (
+              <tr><td colSpan="4" className="text-center">No commission history found</td></tr>
+            ) : (
+              data?.history?.map((item) => (
+                <tr key={item.id}>
+                  <td>
+                    <div className="user_profile">
+                      <div className="user_img">
+                        <img src="/images/user_dash_profile.svg" alt="user" className="round_img" />
+                      </div>
+                      <div className="user_profile_cnt">
+                        <h3>{item.refereeUsername}</h3>
+                        <p>{item.levelLabel}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td>{item.planBought}</td>
+                  <td>{item.level}</td>
+                  <td className="green">{item.commissionEarned}&nbsp;USD</td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
       <div className="pagination">
-        <button className="page-btn active">1</button>
-        <button className="page-btn">2</button>
-        <button className="page-btn">3</button>
-        <button className="page-btn arrow">›</button>
+        {Array.from({ length: data?.totalPages || 1 }, (_, i) => (
+          <button
+            key={i + 1}
+            className={`page-btn ${page === i + 1 ? 'active' : ''}`}
+            onClick={() => setPage(i + 1)}
+          >
+            {i + 1}
+          </button>
+        ))}
+        {page < (data?.totalPages || 1) && (
+          <button
+            className="page-btn arrow"
+            onClick={() => setPage(p => p + 1)}
+          >
+            ›
+          </button>
+        )}
       </div>
     </div>
     <div className="referral_reward_block">
