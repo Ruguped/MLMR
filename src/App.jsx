@@ -17,6 +17,7 @@ import Ticket from './pages/user/support/ticket/Ticket.jsx';
 import Kyc from './pages/user/kyc/Kyc.jsx';
 import Deposit from './features/deposit/Deposit.jsx';
 import Withdraw from './features/withdraw/Withdraw.jsx';
+import Team from './pages/user/team/Team.jsx';
 import api from './libs/api';
 import { useEffect } from 'react';
 
@@ -84,6 +85,7 @@ function App() {
               <Route path="referrals" element={<Referrals />} />
               <Route path="kyc" element={<Kyc />} />
               <Route path="support" element={<Support />} />
+              <Route path="team" element={<Team />} />
               <Route path="support/tickets/:id" element={<Ticket />} />
               <Route path="logout" />
               <Route path="settings" />
