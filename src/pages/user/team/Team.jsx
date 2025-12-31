@@ -1,391 +1,208 @@
-export default function Team() {
-  return (
-    <>
-      <div className="dashboard_right">
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import api from '../../../libs/api';
 
+// Recursive TeamNode component for L2 onwards
+// expandedId and onExpand are passed from parent for accordion behavior
+function TeamNode({ user, expandedId, onExpand, isFirst = false }) {
+  const isExpanded = expandedId === user.id;
+  const [childExpandedId, setChildExpandedId] = useState(null);
 
-        <div className="team_section">
+  // Fetch children when expanded
+  const { data, isLoading } = useQuery({
+    queryKey: ['downline', user.id],
+    queryFn: async () => {
+      const response = await api.get(`/api/referral/downline/${user.id}`);
+      return response.data;
+    },
+    enabled: isExpanded,
+  });
 
-          {/* ===================== LEVEL 1 : MAIN LEADER ===================== */}
-          <div className="top_team first_team">
-            <div className="avatar"><img src="/images/user_account.svg" /></div>
-            <div className="meta">
-              <div className="name">Rakesh J</div>
-              <div className="id">ID: A100</div>
-              <div className="rank">Leader</div>
-            </div>
-          </div>
+  const handleClick = () => {
+    // Toggle: if already expanded, collapse; else expand this and collapse siblings
+    onExpand(isExpanded ? null : user.id);
+    setChildExpandedId(null); // Reset child expansion when toggling
+  };
 
-          {/* *************** TEAM LIST START *************** */}
-          <div className="team_list">
+  const hasChildren = user.hasChildren;
+  const children = data?.children || [];
 
-            {/* ============================================================= */}
-            {/* ========================= LEVEL 2 ============================ */}
-            {/* ============================================================= */}
-            <div className="team_sup">
-
-              {/* LEVEL-2 USER */}
-              <div className="top_team">
-                <div className="avatar"><img src="/images/user_account.svg" /></div>
-                <div className="meta">
-                  <div className="name">Rakesh 2</div>
-                  <div className="id">ID: A100</div>
-                  <div className="rank">Leader</div>
-                </div>
-              </div>
-
-              {/* LEVEL-3 SUBTEAM START */}
-              <div className="subteam" style={{ display: 'flex' }}>
-
-                {/* ============================================================= */}
-                {/* ========================= LEVEL 3 ============================ */}
-                {/* ============================================================= */}
-                <div className="team_sup">
-
-                  {/* LEVEL-3 USER */}
-                  <div className="top_team">
-                    <div className="avatar"><img src="/images/user_account.svg" /></div>
-                    <div className="meta">
-                      <div className="name">Rakesh J</div>
-                      <div className="id">ID: A100</div>
-                      <div className="rank">Leader</div>
-                    </div>
-                  </div>
-
-                  {/* LEVEL-4 SUBTEAM START */}
-                  <div className="subteam">
-
-                    {/* ============================================================= */}
-                    {/* ========================= LEVEL 4 ============================ */}
-                    {/* ============================================================= */}
-                    <div className="team_sup">
-
-                      {/* LEVEL-4 USER */}
-                      <div className="top_team">
-                        <div className="avatar"><img src="/images/user_account.svg" /></div>
-                        <div className="meta">
-                          <div className="name">Rakesh 4</div>
-                          <div className="id">ID: A100</div>
-                          <div className="rank">Leader</div>
-                        </div>
-                      </div>
-
-                      {/* LEVEL-5 SUBTEAM START */}
-                      <div className="subteam">
-
-                        {/* ============================================================= */}
-                        {/* ========================= LEVEL 5 ============================ */}
-                        {/* ============================================================= */}
-                        <div className="team_sup">
-
-                          {/* LEVEL-5 USER */}
-                          <div className="top_team">
-                            <div className="avatar"><img src="/images/user_account.svg" /></div>
-                            <div className="meta">
-                              <div className="name">Rakesh 5</div>
-                              <div className="id">ID: A100</div>
-                              <div className="rank">Leader</div>
-                            </div>
-                          </div>
-
-                          {/* LEVEL-6 SUBTEAM START */}
-                          <div className="subteam">
-
-                            {/* ============================================================= */}
-                            {/* ========================= LEVEL 6 ============================ */}
-                            {/* ============================================================= */}
-                            <div className="team_sup">
-
-                              {/* LEVEL-6 USER */}
-                              <div className="top_team">
-                                <div className="avatar"><img src="/images/user_account.svg" /></div>
-                                <div className="meta">
-                                  <div className="name">Rakesh 6</div>
-                                  <div className="id">ID: A100</div>
-                                  <div className="rank">Leader</div>
-                                </div>
-                              </div>
-
-                              {/* LEVEL-7 SUBTEAM START */}
-                              <div className="subteam">
-
-                                {/* ============================================================= */}
-                                {/* ========================= LEVEL 7 ============================ */}
-                                {/* ============================================================= */}
-
-                                {/* MULTIPLE Level-7 USERS */}
-                                <div className="top_team">
-                                  <div className="avatar"><img src="/images/user_account.svg" /></div>
-                                  <div className="meta">
-                                    <div className="name">Rakesh 7</div>
-                                    <div className="id">ID: A100</div>
-                                    <div className="rank">Leader</div>
-                                  </div>
-                                </div>
-
-                                <div className="top_team">
-                                  <div className="avatar"><img src="/images/user_account.svg" /></div>
-                                  <div className="meta">
-                                    <div className="name">Rakesh 7</div>
-                                    <div className="id">ID: A100</div>
-                                    <div className="rank">Leader</div>
-                                  </div>
-                                </div>
-
-                              </div>
-                              {/* LEVEL-7 END */}
-
-                            </div>
-                            {/* LEVEL-6 END */}
-
-                            {/* LEVEL-6 SIBLING USER */}
-                            <div className="top_team">
-                              <div className="avatar"><img src="/images/user_account.svg" /></div>
-                              <div className="meta">
-                                <div className="name">Rakesh sub</div>
-                                <div className="id">ID: A100</div>
-                                <div className="rank">Leader</div>
-                              </div>
-                            </div>
-
-                          </div>
-                          {/* LEVEL-6 SUBTEAM END */}
-
-                        </div>
-                        {/* LEVEL-5 END */}
-
-                        {/* LEVEL-5 SIBLING USERS */}
-                        <div className="top_team">
-                          <div className="avatar"><img src="/images/user_account.svg" /></div>
-                          <div className="meta">
-                            <div className="name">Rakesh J</div>
-                            <div className="id">ID: A100</div>
-                            <div className="rank">Leader</div>
-                          </div>
-                        </div>
-
-                        <div className="top_team">
-                          <div className="avatar"><img src="/images/user_account.svg" /></div>
-                          <div className="meta">
-                            <div className="name">Rakesh J</div>
-                            <div className="id">ID: A100</div>
-                            <div className="rank">Leader</div>
-                          </div>
-                        </div>
-
-                        <div className="top_team">
-                          <div className="avatar"><img src="/images/user_account.svg" /></div>
-                          <div className="meta">
-                            <div className="name">Rakesh J</div>
-                            <div className="id">ID: A100</div>
-                            <div className="rank">Leader</div>
-                          </div>
-                        </div>
-
-                      </div>
-                      {/* LEVEL-5 SUBTEAM END */}
-
-                    </div>
-                    {/* LEVEL-4 END */}
-
-                    {/* LEVEL-4 SIBLING USER */}
-                    <div className="top_team">
-                      <div className="avatar"><img src="/images/user_account.svg" /></div>
-                      <div className="meta">
-                        <div className="name">Rakesh sdfdf</div>
-                        <div className="id">ID: A100</div>
-                        <div className="rank">Leader</div>
-                      </div>
-                    </div>
-
-                  </div>
-                  {/* LEVEL-4 SUBTEAM END */}
-
-                </div>
-                {/* LEVEL-3 END */}
-
-                {/* LEVEL-3 SIBLING USER 1 */}
-                <div className="top_team">
-                  <div className="avatar"><img src="/images/user_account.svg" /></div>
-                  <div className="meta">
-                    <div className="name">Rakesh J</div>
-                    <div className="id">ID: A100</div>
-                    <div className="rank">Leader</div>
-                  </div>
-                </div>
-
-                {/* LEVEL-3 SIBLING USER 2 */}
-                <div className="top_team">
-                  <div className="avatar"><img src="/images/user_account.svg" /></div>
-                  <div className="meta">
-                    <div className="name">Rakesh J</div>
-                    <div className="id">ID: A100</div>
-                    <div className="rank">Leader</div>
-                  </div>
-                </div>
-
-              </div>
-              {/* LEVEL-3 SUBTEAM END */}
-
-            </div>
-            {/* LEVEL-2 END */}
-
-
-            {/* ============================================================= */}
-            {/* EXTRA LEVEL-2 BLOCKS (HIDDEN) */}
-            {/* ============================================================= */}
-
-            <div className="team_sup">
-              <div className="top_team">
-                <div className="avatar"><img src="/images/user_account.svg" /></div>
-                <div className="meta">
-                  <div className="name">Rakesh sub</div>
-                  <div className="id">ID: A100</div>
-                  <div className="rank">Leader</div>
-                </div>
-              </div>
-
-
-              <div className="subteam" style={{ display: 'none' }}>
-                {/* 3 Users */}
-                <div className="top_team">
-                  <div className="avatar"><img src="/images/user_account.svg" /></div>
-                  <div className="meta">
-                    <div className="name">Rakesh J</div>
-                    <div className="id">ID: A100</div>
-                    <div className="rank">Leader</div>
-                  </div>
-                </div>
-                <div className="top_team">
-                  <div className="avatar"><img src="/images/user_account.svg" /></div>
-                  <div className="meta">
-                    <div className="name">Rakesh J</div>
-                    <div className="id">ID: A100</div>
-                    <div className="rank">Leader</div>
-                  </div>
-                </div>
-                <div className="top_team">
-                  <div className="avatar"><img src="/images/user_account.svg" /></div>
-                  <div className="meta">
-                    <div className="name">Rakesh J</div>
-                    <div className="id">ID: A100</div>
-                    <div className="rank">Leader</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="team_sup">
-              <div className="top_team">
-                <div className="avatar"><img src="/images/user_account.svg" /></div>
-                <div className="meta">
-                  <div className="name">Rakesh sub</div>
-                  <div className="id">ID: A100</div>
-                  <div className="rank">Leader</div>
-                </div>
-              </div>
-
-
-              <div className="subteam" style={{ display: 'none' }}>
-                {/* 3 Users */}
-                <div className="top_team">
-                  <div className="avatar"><img src="/images/user_account.svg" /></div>
-                  <div className="meta">
-                    <div className="name">Rakesh J</div>
-                    <div className="id">ID: A100</div>
-                    <div className="rank">Leader</div>
-                  </div>
-                </div>
-                <div className="top_team">
-                  <div className="avatar"><img src="/images/user_account.svg" /></div>
-                  <div className="meta">
-                    <div className="name">Rakesh J</div>
-                    <div className="id">ID: A100</div>
-                    <div className="rank">Leader</div>
-                  </div>
-                </div>
-                <div className="top_team">
-                  <div className="avatar"><img src="/images/user_account.svg" /></div>
-                  <div className="meta">
-                    <div className="name">Rakesh J</div>
-                    <div className="id">ID: A100</div>
-                    <div className="rank">Leader</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="team_sup">
-              <div className="top_team">
-                <div className="avatar"><img src="/images/user_account.svg" /></div>
-                <div className="meta">
-                  <div className="name">Rakesh sub</div>
-                  <div className="id">ID: A100</div>
-                  <div className="rank">Leader</div>
-                </div>
-              </div>
-
-
-              <div className="subteam" style={{ display: 'none' }}>
-                {/* 3 Users */}
-                <div className="top_team">
-                  <div className="avatar"><img src="/images/user_account.svg" /></div>
-                  <div className="meta">
-                    <div className="name">Rakesh J</div>
-                    <div className="id">ID: A100</div>
-                    <div className="rank">Leader</div>
-                  </div>
-                </div>
-                <div className="top_team">
-                  <div className="avatar"><img src="/images/user_account.svg" /></div>
-                  <div className="meta">
-                    <div className="name">Rakesh J</div>
-                    <div className="id">ID: A100</div>
-                    <div className="rank">Leader</div>
-                  </div>
-                </div>
-                <div className="top_team">
-                  <div className="avatar"><img src="/images/user_account.svg" /></div>
-                  <div className="meta">
-                    <div className="name">Rakesh J</div>
-                    <div className="id">ID: A100</div>
-                    <div className="rank">Leader</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="team_sup">
-              <div className="top_team">
-                <div className="avatar"><img src="/images/user_account.svg" /></div>
-                <div className="meta">
-                  <div className="name">Rakesh sub</div>
-                  <div className="id">ID: A100</div>
-                  <div className="rank">Leader</div>
-                </div>
-              </div>
-
-            </div>
-
-            <div className="team_sup">
-              <div className="top_team">
-                <div className="avatar"><img src="/images/user_account.svg" /></div>
-                <div className="meta">
-                  <div className="name">Rakesh sub</div>
-                  <div className="id">ID: A100</div>
-                  <div className="rank">Leader</div>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-          {/* *************** TEAM LIST END *************** */}
-
+  // Render leaf node (no children) - plain top_team div
+  if (!hasChildren) {
+    return (
+      <div className="top_team">
+        <div className="avatar">
+          <img src="/images/user_account.svg" alt="user" />
         </div>
-        {/* ===================== TEAM SECTION END ===================== */}
-
-
+        <div className="meta">
+          <div className="name">{user.username}</div>
+          <div className="id">ID:</div>
+          <div className="rank">{user.highestPlan || 'Member'}</div>
+        </div>
       </div>
-    </>
-  )
+    );
+  }
+
+  // Render node with children - wrapped in team_sup
+  return (
+    <div className="team_sup">
+      <div
+        className="top_team"
+        onClick={handleClick}
+        style={{ cursor: 'pointer' }}
+      >
+        <div className="avatar">
+          <img src="/images/user_account.svg" alt="user" />
+        </div>
+        <div className="meta">
+          <div className="name">{user.username}</div>
+          <div className="id">ID:</div>
+          <div className="rank">{user.highestPlan || 'Member'}</div>
+        </div>
+      </div>
+
+      {isExpanded && (
+        <div className="subteam">
+          {isLoading ? (
+            <div className="top_team">
+              <div className="meta">
+                <div className="name">Loading...</div>
+              </div>
+            </div>
+          ) : children.length > 0 ? (
+            children.map((child, index) => (
+              <TeamNode
+                key={child.id}
+                user={child}
+                expandedId={childExpandedId}
+                onExpand={setChildExpandedId}
+                isFirst={index === 0}
+              />
+            ))
+          ) : (
+            <div className="top_team">
+              <div className="meta">
+                <div className="name">No referrals</div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default function Team() {
+  const [isRootExpanded, setIsRootExpanded] = useState(false);
+  const [expandedL1Id, setExpandedL1Id] = useState(null);
+
+  const { data: rootData, isLoading, error } = useQuery({
+    queryKey: ['root-user'],
+    queryFn: async () => {
+      const response = await api.get('/api/referral/downline');
+      return response.data;
+    },
+  });
+
+  const { data: childrenData, isLoading: childrenLoading } = useQuery({
+    queryKey: ['root-children'],
+    queryFn: async () => {
+      const response = await api.get('/api/referral/downline');
+      return response.data;
+    },
+    enabled: isRootExpanded,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="dashboard_right">
+        <div className="team_section">
+          <div className="top_team first_team">
+            <div className="avatar">
+              <img src="/images/user_account.svg" alt="user" />
+            </div>
+            <div className="meta">
+              <div className="name">Loading...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="dashboard_right">
+        <div className="team_section">
+          <div className="top_team first_team">
+            <div className="avatar">
+              <img src="/images/user_account.svg" alt="user" />
+            </div>
+            <div className="meta">
+              <div className="name">Error loading team data</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const rootUser = rootData?.user;
+  const children = childrenData?.children || [];
+
+  return (
+    <div className="dashboard_right">
+      <div className="team_section">
+        {rootUser && (
+          <>
+            <div
+              className="top_team first_team"
+              onClick={() => {
+                setIsRootExpanded(!isRootExpanded);
+                setExpandedL1Id(null);
+              }}
+              style={{ cursor: 'pointer' }}
+            >
+              <div className="avatar">
+                <img src="/images/user_account.svg" alt="user" />
+              </div>
+              <div className="meta">
+                <div className="name">{rootUser.username}</div>
+                <div className="id">ID:</div>
+                <div className="rank">{rootUser.highestPlan || 'Leader'}</div>
+              </div>
+            </div>
+
+            {isRootExpanded && (
+              <div className="team_list">
+                {childrenLoading ? (
+                  <div className="top_team">
+                    <div className="meta">
+                      <div className="name">Loading...</div>
+                    </div>
+                  </div>
+                ) : children.length > 0 ? (
+                  children.map((child, index) => (
+                    <TeamNode
+                      key={child.id}
+                      user={child}
+                      expandedId={expandedL1Id}
+                      onExpand={setExpandedL1Id}
+                      isFirst={index === 0}
+                    />
+                  ))
+                ) : (
+                  <div className="top_team">
+                    <div className="meta">
+                      <div className="name">No direct referrals</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
 }
