@@ -20,6 +20,7 @@ export default function Referrals() {
           sortOrder: order
         }
       });
+      console.log(response.data);
       return response.data;
     },
     keepPreviousData: true, // Smooth UX when changing pages

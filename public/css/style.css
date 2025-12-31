@@ -38,6 +38,7 @@ h2 {
     padding: 0px 20px;
 }
 
+/* ================= HEADER & NAV ================= */
 
 header {
     padding: 20px 0px 20px;
@@ -71,7 +72,6 @@ body header nav ul li a.nav-link {
 body header nav ul li a.nav-link:hover {
     color: #1053C1;
 }
-
 
 .login_sign button {
     padding: 9px 32px;
@@ -120,6 +120,8 @@ body header nav ul li ul.dropdown-menu li a:hover {
 header .row {
     align-items: center;
 }
+
+/* ================= LOGIN & LIGHTBOX ================= */
 
 .loginlightbox .modal-content {
     background: linear-gradient(270deg, rgb(255 255 255) 51%, rgb(236 236 247) 100%);
@@ -175,7 +177,7 @@ header .row {
     background-color: #fff;
 }
 
-
+/* ================= HERO SECTION ================= */
 
 .hero_section {
     width: 100%;
@@ -301,7 +303,6 @@ button.btn:hover {
 .vector_bottom {
     position: absolute;
     bottom: -60px;
-    /* width: 270px; */
     left: 0px;
 }
 
@@ -317,6 +318,8 @@ button.btn:hover {
     left: 290px;
     top: -90px;
 }
+
+/* ================= WHY CHOOSE US ================= */
 
 section.why_choose_s {
     width: 100%;
@@ -413,13 +416,11 @@ section.why_choose_s h2 {
     row-gap: 24px;
 }
 
-
 .line_animation {
     position: absolute;
     right: 50px;
     top: 35px;
 }
-
 
 .left_animation {
     position: absolute;
@@ -433,7 +434,6 @@ section.why_choose_s h2 {
     left: -50px;
 }
 
-
 .dotted_effect_2 {
     position: absolute;
     right: -30px;
@@ -445,6 +445,8 @@ section.why_choose_s h2 {
     right: -100px;
     transform: rotate(91deg);
 }
+
+/* ================= HOW IT WORKS ================= */
 
 section.how_work {
     width: 100%;
@@ -488,7 +490,6 @@ section.how_work p {
     font-size: 20px;
     padding-top: 20px;
 }
-
 
 .work_cate_list ul {
     display: flex;
@@ -566,6 +567,8 @@ section.how_work p {
     left: -40px;
 }
 
+/* ================= FOOTER ================= */
+
 footer {
     width: 100%;
     color: #000000;
@@ -632,6 +635,8 @@ section.footer_main ul li a:hover {
     color: #1053c1;
 }
 
+/* ================= FORMS & UTILS ================= */
+
 .methods_h {
     width: 100%;
     display: block;
@@ -681,7 +686,6 @@ ul.emailtabs li {
     width: 50%;
 }
 
-
 ul.emailtabs li button.nav-link.active {
     color: #0b5fd4;
     border-bottom: 1px solid #0b5fd4;
@@ -709,10 +713,6 @@ ul.emailtabs li button.nav-link.active {
 .email_mobile_form {
     width: 100%;
     padding: 0px 24px;
-}
-
-.email_mobile_form .tab-content form {
-    margin: 20px 0px;
 }
 
 .email_mobile_form .tab-content form {
@@ -761,27 +761,7 @@ ul.emailtabs li button.nav-link.active {
     padding: 10px 0px;
 }
 
-::placeholder {
-    color: #5e5e5e !important;
-}
-
-::-webkit-input-placeholder {
-    color: #5e5e5e !important;
-}
-
-:-ms-input-placeholder {
-    color: #5e5e5e !important;
-}
-
-::-ms-input-placeholder {
-    color: #5e5e5e !important;
-}
-
-::-moz-placeholder {
-    color: #5e5e5e !important;
-}
-
-:-moz-placeholder {
+::placeholder, ::-webkit-input-placeholder, :-ms-input-placeholder, ::-ms-input-placeholder, ::-moz-placeholder, :-moz-placeholder {
     color: #5e5e5e !important;
 }
 
@@ -847,6 +827,8 @@ button.btn-close {
     right: 10px;
     top: 10px;
 }
+
+/* ================= OPPORTUNITIES & PACKAGES ================= */
 
 section.opportunities_bl {
     padding: 80px 0px 0px;
@@ -1000,7 +982,6 @@ button.planbtn {
     padding: 30px 32px;
 }
 
-
 .packages_block.vip_block {
     border-color: #AC42FF;
 }
@@ -1043,7 +1024,6 @@ button.planbtn {
     top: -43px;
 }
 
-
 .silver_block .star_icon {
     right: -49px;
     left: inherit;
@@ -1059,6 +1039,8 @@ button.planbtn {
     left: inherit;
     right: -50px;
 }
+
+/* ================= STRUCTURE LEVEL & FAQ ================= */
 
 .structure_level_s {
     width: 100%;
@@ -1121,7 +1103,6 @@ button.planbtn {
     position: relative;
     margin-top: 90px;
 }
-
 
 .faq_section {
     width: 100%;
@@ -1243,7 +1224,7 @@ button.planbtn {
     margin-top: 24px;
 }
 
-
+/* ================= DASHBOARD & SIDE MENU ================= */
 
 .dashboard {
     display: flex;
@@ -2072,7 +2053,6 @@ tr.border_none {
     cursor: pointer;
 }
 
-
 .submit_ticket_form .col-input_bl {
     flex-direction: column;
     gap: 20px;
@@ -2819,6 +2799,144 @@ a.analyticsbtn {
     font-weight: 600;
 }
 
+/* ================= TEAM / ORGANIZATION TREE ================= */
+/* Copied from style - Copy.css */
+
+.team_section {
+    width: 100%;
+    position: relative;
+    overflow: auto;
+    padding: 24px;
+    min-height: 800px;
+}
+
+.top_team {
+    background: #fff;
+    padding: 12px 16px;
+    border-radius: 10px;
+    display: flex;
+    position: relative;
+    z-index: 999999;
+    gap: 12px;
+    align-items: center;
+    min-width: 185px;
+    box-shadow: 0 4px 12px rgb(2 6 23 / 13%);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgb(153 153 153 / 3%);
+}
+
+.avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, var(--accent), #7c3aed);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #061826;
+}
+
+.meta .name {
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.meta .id {
+    font-size: 12px;
+    color: #585858;
+}
+
+.meta .rank {
+    font-size: 12px;
+    color: #0e58c9;
+    margin-top: 6px;
+}
+
+.team_list {
+    position: relative;
+    width: 100%;
+    min-width: fit-content;
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin-top: 48px;
+}
+
+.team_list .top_team::before {
+    position: absolute;
+    content: "";
+    border-top: 1px solid #999;
+    top: -22px;
+    width: 220px;
+}
+
+.team_list .top_team::after {
+    position: absolute;
+    content: "";
+    background: #999;
+    top: -22px;
+    height: 21px;
+    width: 1px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.subteam {
+    display: flex;
+    position: absolute;
+    bottom: -120px;
+    gap: 24px;
+}
+
+.team_sup {
+    position: relative;
+}
+
+.team_list .subteam .top_team::before {
+    display: none;
+}
+
+.team_list .subteam .top_team:first-child::after {
+    display: block;
+    background: #999;
+    top: -32px;
+    height: 32px;
+}
+
+.team_list .subteam .top_team::after {
+    display: none;
+}
+
+.subteam::after {
+    position: absolute;
+    content: "";
+    background: #999;
+    top: -22px;
+    height: 1px;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.first_team:after {
+    height: 26px;
+    width: 1px;
+    background-color: #999999;
+    content: "";
+    position: absolute;
+    bottom: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.top_team.first_team {
+    width: 185px;
+    margin: 0 auto;
+}
+
+/* ================= MEDIA QUERIES ================= */
+
 @media screen and (max-width:1550px) {
 
     .banner_img {
@@ -2886,11 +3004,7 @@ a.analyticsbtn {
         padding: 7px 20px;
         font-size: 15px;
     }
-
-
 }
-
-
 
 @media screen and (max-width:1366px) {
 
@@ -2963,9 +3077,6 @@ a.analyticsbtn {
     .summary .title {
         font-size: 24px;
     }
-
-
-
 }
 
 @media screen and (max-width:1200px) {
@@ -4337,8 +4448,8 @@ a.analyticsbtn {
 
 }
 
-
-
+/* ================= PREVIEW CARD STYLES ================= */
+/* Copied from style.css (Found at the end) */
 
 .preview_card {
   border: 1px solid #333;

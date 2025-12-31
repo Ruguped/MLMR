@@ -279,14 +279,14 @@ console.log( 'there are referralsby plan L1', referralsByPlanL1, 'referralsByPla
                     <button className="btn">KYC Verify</button>
                   </div>
                 </li>
-                <li>
+                {/*<li>
                   <div className="cv_trade_img"><img src="/images/team_img.png" alt="recommendations" /></div>
                   <div className="cnt_slider_f">
                     <h6>Complete Identity Verification</h6>
                     <p>Lorem Ipsum&nbsp;is simply dummy text of theprinting andtypesetting industry. </p>
                     <button className="btn">KYC Verify</button>
                   </div>
-                </li>
+                </li>*/}
               </ul>
             </div>
           </div>
