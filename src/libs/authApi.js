@@ -78,3 +78,6 @@ export const withdraw = (payload) => api.post('/api/user/withdraw', payload, {
 
 
 export const buyPlan = (payload) => api.post('/api/Investment/buy', payload);
+
+
+export const topReferrals = () => api.get('/api/referral/top-performers?limit=10');

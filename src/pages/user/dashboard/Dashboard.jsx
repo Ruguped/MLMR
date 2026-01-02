@@ -1,59 +1,73 @@
 import React, { useState, useEffect } from 'react'
 import useUserStore from '../../../store/userStore.js'
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import SideProfile from '../../../components/layout/SideProfile'
+import { topReferrals } from '../../../libs/authApi';
+import { useQuery } from '@tanstack/react-query';
 
 
 export default function Dashboard() {
   const { user } = useUserStore();
   const {
-  _id,
-  username,
-  phone,
-  email,
-  role,
-  isVerified,
-  highestPlan,
-  verificationStatus,
-  sponsorId,
-  sponsorUsername,
-  referredByAdmin,
-  investmentAmount,
-  totalInvested,
-  dailyROI,
-  maxReturnPercentage,
-  totalEarnings,
-  lastROICalculated,
-  directReferrals,
-  totalReferrals,
-  kycStatus,
-  kycRejectionReason,
-  kycSubmittedAt,
-  totalCommission,
-  depositWallet,
-  investmentWallet,
-  returnsWallet,
-  //income wala ROI khud ka plan ke hisab se calculate karna hai
-  isActive,
-  isBanned,
-  referralsByPlanL1,
-  referralsByPlanL2ToL7,
-  network,
-  transactions,
-  referralCode,
-  createdAt,
-  updatedAt,
-  __v,
-  kycDocuments: {
-    panCard,
-    aadhaarFront,
-    aadhaarBack,
-    selfie
-  }
-} = user;
+    _id,
+    username,
+    phone,
+    email,
+    role,
+    isVerified,
+    highestPlan,
+    verificationStatus,
+    sponsorId,
+    sponsorUsername,
+    referredByAdmin,
+    investmentAmount,
+    totalInvested,
+    dailyROI,
+    maxReturnPercentage,
+    totalEarnings,
+    lastROICalculated,
+    directReferrals,
+    totalReferrals,
+    kycStatus,
+    kycRejectionReason,
+    kycSubmittedAt,
+    totalCommission,
+    depositWallet,
+    investmentWallet,
+    returnsWallet,
+    //income wala ROI khud ka plan ke hisab se calculate karna hai
+    isActive,
+    isBanned,
+    referralsByPlanL1,
+    referralsByPlanL2ToL7,
+    network,
+    transactions,
+    referralCode,
+    createdAt,
+    updatedAt,
+    __v,
+    kycDocuments: {
+      panCard,
+      aadhaarFront,
+      aadhaarBack,
+      selfie
+    }
+  } = user;
+
+  const { data: topReferralsData } = useQuery({
+    queryKey: ['topReferrals'],
+    queryFn: async () => {
+      const response = await topReferrals();
+      return response.data; // Extract the data from axios response
+    },
+  });
 
 
-console.log( 'there are referralsby plan L1', referralsByPlanL1, 'referralsByPlanL2ToL7', referralsByPlanL2ToL7, 'this is totalReferrals', totalReferrals);
+
+  console.log('there are referralsby plan L1', referralsByPlanL1, 'referralsByPlanL2ToL7', referralsByPlanL2ToL7, 'this is totalReferrals', totalReferrals);
+
+
+  console.log('top referrals data', topReferralsData);
 
 
   return (
@@ -69,8 +83,8 @@ console.log( 'there are referralsby plan L1', referralsByPlanL1, 'referralsByPla
               <div className="dashboardsummary_bottom">
                 <h4>{highestPlan}<span className="price">
                   {highestPlan === 'Basic' ? '$50- $1k' : highestPlan === 'Silver' ? '$200- $2k' :
-                   highestPlan === 'Gold' ? '$1k- $5k' : highestPlan === 'Platinum' ? '$2k- $10k' : highestPlan === 'Diamond' ? '$4k- $30k' : highestPlan === 'VIP' ? '$6k- $50k' : 'INACTIVE'}
-                  </span></h4><Link className="btn" to="/user/plans" state={{ from: 'dashboard' }}>View Plan</Link>
+                    highestPlan === 'Gold' ? '$1k- $5k' : highestPlan === 'Platinum' ? '$2k- $10k' : highestPlan === 'Diamond' ? '$4k- $30k' : highestPlan === 'VIP' ? '$6k- $50k' : 'INACTIVE'}
+                </span></h4><Link className="btn" to="/user/plans" state={{ from: 'dashboard' }}>View Plan</Link>
               </div>
             </div>
           </div>
@@ -160,110 +174,21 @@ console.log( 'there are referralsby plan L1', referralsByPlanL1, 'referralsByPla
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>
-                        <div className="user_profile">
-                          <div className="user_img"><img src="/images/user_dash_profile.svg" alt="user" className="round_img" />
+                    {(topReferralsData?.topPerformers || []).map((item) => (
+                      <tr key={item._id}>
+                        <td>
+                          <div className="user_profile">
+                            <div className="user_img"><img src="/images/user_dash_profile.svg" alt="user" className="round_img" />
+                            </div>
+                            <div className="user_profile_cnt">
+                              <h3>{item.username}</h3>
+                              <p>Not Yet Uploaded</p>
+                            </div>
                           </div>
-                          <div className="user_profile_cnt">
-                            <h3>pallavsoni64@gmail.com</h3>
-                            <p>Not Yet Uploaded</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="green">$100.50</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div className="user_profile">
-                          <div className="user_img"><img src="/images/user_dash_profile.svg" alt="user" className="round_img" />
-                          </div>
-                          <div className="user_profile_cnt">
-                            <h3>pallavsoni64@gmail.com</h3>
-                            <p>Not Yet Uploaded</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="green">$100.50</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div className="user_profile">
-                          <div className="user_img"><img src="/images/user_dash_profile.svg" alt="user" className="round_img" />
-                          </div>
-                          <div className="user_profile_cnt">
-                            <h3>pallavsoni64@gmail.com</h3>
-                            <p>Not Yet Uploaded</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="green">$100.50</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div className="user_profile">
-                          <div className="user_img"><img src="/images/user_dash_profile.svg" alt="user" className="round_img" />
-                          </div>
-                          <div className="user_profile_cnt">
-                            <h3>pallavsoni64@gmail.com</h3>
-                            <p>Not Yet Uploaded</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="green">$100.50</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div className="user_profile">
-                          <div className="user_img"><img src="/images/user_dash_profile.svg" alt="user" className="round_img" />
-                          </div>
-                          <div className="user_profile_cnt">
-                            <h3>pallavsoni64@gmail.com</h3>
-                            <p>Not Yet Uploaded</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="green">$100.50</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div className="user_profile">
-                          <div className="user_img"><img src="/images/user_dash_profile.svg" alt="user" className="round_img" />
-                          </div>
-                          <div className="user_profile_cnt">
-                            <h3>pallavsoni64@gmail.com</h3>
-                            <p>Not Yet Uploaded</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="green">$100.50</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div className="user_profile">
-                          <div className="user_img"><img src="/images/user_dash_profile.svg" alt="user" className="round_img" />
-                          </div>
-                          <div className="user_profile_cnt">
-                            <h3>pallavsoni64@gmail.com</h3>
-                            <p>Not Yet Uploaded</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="green right">$100.50</td>
-                    </tr>
-                    <tr>
-                      <td>
-                        <div className="user_profile">
-                          <div className="user_img"><img src="/images/user_dash_profile.svg" alt="user" className="round_img" />
-                          </div>
-                          <div className="user_profile_cnt">
-                            <h3>pallavsoni64@gmail.com</h3>
-                            <p>Not Yet Uploaded</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="green">$100.50</td>
-                    </tr>
+                        </td>
+                        <td className="green">{item.totalCommission}</td>
+                      </tr>
+                    ))}
                   </tbody>
                 </table>
               </div>
