@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import api from '../../../libs/api';
 import SideProfile from "../../../components/layout/SideProfile";
+import { Link } from 'react-router-dom';
 
 export default function Referrals() {
   const [page, setPage] = useState(1);
@@ -47,6 +48,7 @@ export default function Referrals() {
           <option value='newest'>Newest</option>
           <option value='oldest'>Oldest</option>
         </select>
+        <Link to="/user/team">VIEW ALL TEAM</Link>  
       </h2>
       <div className="table-responsive">
         <table>
