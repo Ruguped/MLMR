@@ -1,12 +1,17 @@
 import React from 'react'
 import useUserStore from '../../store/userStore'
 import { useToastStore } from '../../store/toastStore';
+import { Link } from 'react-router-dom';
 
 
 export default function SideProfile() {
   const { user } = useUserStore();
   const { _id, username, referralCode, kycStatus } = user;
   const { success } = useToastStore();
+
+  const kycTextStyle = {
+    color: kycStatus === 'not_submitted' ? 'blue' : kycStatus === 'verified' ? 'green' : kycStatus === 'rejected' ? 'red' : 'blue'
+  }
   return (
     <div className="top_header_dash">
       <div className="user_profile">
@@ -32,10 +37,10 @@ export default function SideProfile() {
           <div>{referralCode}<img onClick={() => {
             navigator.clipboard.writeText(referralCode);
             success('Copied to Clipboard')
-          }} src="/images/uid_icon.svg" className="m-1" alt="icon" /></div>
+          }} src="/images/uid_icon.svg" className="m-1" alt="icon" /></div> 
         </div>
         <div className="profile_id kycstatus">
-          <span>KYC Status</span><a className="text-success" href="#">{kycStatus.toUpperCase()}</a>
+          <span>KYC Status</span><Link to='/user/kyc' className="text-success" style={{color: {kycTextStyle}}} >{kycStatus.toUpperCase()}</Link>
         </div>
       </div>
     </div>)

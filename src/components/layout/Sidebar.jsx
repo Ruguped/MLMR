@@ -27,19 +27,9 @@ export function Sidebar({
         </div>
       </Link></li>
       <li className={location.pathname === '/user/wallet' ? 'active' : ''}><Link to='/user/wallet'>
-        <button className="btn btn-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#orders-collapse" aria-expanded="false">
-          <div className="cnt_menu_l">
-            <img src="/images/wallet_icon.svg" alt="Wallet" />
-            <h5>Wallet</h5>
-          </div>
-          <span className="arrowmenu"><i className="fa-solid fa-chevron-down" /></span>
-        </button>
-        <div className="collapse" id="orders-collapse">
-          <ul className="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-            <li><span className="rounded">Settings</span></li>
-            <li><span className="rounded">Verification</span></li>
-            <li><span className="rounded">Currency Preference</span></li>
-          </ul>
+        <div className="cnt_menu_l">
+          <img src="/images/wallet_icon.svg" alt="Wallet" />
+          <h5>Wallet</h5>
         </div>
       </Link>
       </li>
@@ -72,6 +62,14 @@ export function Sidebar({
           </ul>
         </div></Link>
       </li>
+      <li className={location.pathname === '/user/team' ? 'active' : ''}>
+        <Link to="/user/team">
+          <div className="cnt_menu_l">
+            <img src="/images/team_icon.svg" alt="Team" />
+            <h5>Team</h5>
+          </div>
+        </Link>
+      </li>
       <li className={location.pathname === '/user/kyc' ? 'active' : ''}><Link to='/user/kyc'>
         <div className="cnt_menu_l">
           <img src="/images/kyc_icon.svg" alt="KYC" />
@@ -79,18 +77,12 @@ export function Sidebar({
         </div>
       </Link></li>
       <li className={location.pathname === '/user/support' ? 'active' : ''}><Link to='/user/support'>
-        <button className="btn btn-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="false">
+        
           <div className="cnt_menu_l">
             <img src="/images/support_icon.svg" alt="Support" />
             <h5>Support</h5>
           </div>
-          <span className="arrowmenu"><i className="fa-solid fa-chevron-down" /></span>
-        </button>
-        <div className="collapse" id="account-collapse">
-          <ul className="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-            <li><span className="rounded">Settings</span></li>
-          </ul>
-        </div></Link>
+          </Link>
       </li>
       <li className={location.pathname === '/user/logout' ? 'active' : ''}><Link to='/user/logout'>
         <div className="cnt_menu_l">

@@ -4,9 +4,12 @@ import { Link } from 'react-router-dom'
 import SideProfile from '../../../components/layout/SideProfile'
 import { topReferrals } from '../../../libs/authApi';
 import { useQuery } from '@tanstack/react-query';
-
+import ReChart1 from '../../../components/ReChart1.jsx'
+import ReChart2 from '../../../components/ReChart2.jsx'
+import { useNavigate } from 'react-router-dom';
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const { user } = useUserStore();
   const {
     _id,
@@ -142,24 +145,8 @@ export default function Dashboard() {
               </li>
             </ul>
           </div>
-          <div className="growth_summary">
-            <div className="d-flex team_tp">
-              <h4>Team growth</h4>
-              <span>Last Week</span>
-            </div>
-            <div className="summary_data">
-              <img src="/images/data_summary.svg" />
-            </div>
-          </div>
-          <div className="growth_summary">
-            <div className="d-flex team_tp">
-              <h4>Team growth</h4>
-              <span>Year Chart</span>
-            </div>
-            <div className="summary_data">
-              <img src="/images/data_summary2.svg" />
-            </div>
-          </div>
+          <ReChart1 />
+          <ReChart2 />
         </div>
         <div className="dashboard_right_side">
           <div className="new_features_s">
@@ -199,9 +186,15 @@ export default function Dashboard() {
                 <li>
                   <div className="cv_trade_img"><img src="/images/team_img.png" alt="recommendations" /></div>
                   <div className="cnt_slider_f">
-                    <h6>Complete Identity Verification</h6>
-                    <p>Lorem Ipsum&nbsp;is simply dummy text of theprinting andtypesetting industry. </p>
-                    <button className="btn">KYC Verify</button>
+                    {user?.isVerified ? <> 
+                    <h6>Hurray! You are verified</h6>
+                    <p>Now you can enjoy all the features of our platform.</p>
+                    <button className="btn" onClick={() => navigate('/user/plans')}>Buy Plans</button>
+                     </>: <>
+                      <h6>Complete Identity Verification</h6>
+                    <p>Please complete your identity verification to unlock more features.</p>
+                    <button className="btn" onClick={() => navigate('/user/kyc')}>KYC Verify</button>
+                    </>}
                   </div>
                 </li>
                 {/*<li>

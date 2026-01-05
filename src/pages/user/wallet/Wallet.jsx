@@ -21,15 +21,15 @@ export default function Wallet() {
         <ul>
           <li>
             <h4>Deposit Amount</h4>
-            ${depositWallet}          </li>
+           <span style={{ fontSize: '22px', fontWeight: 'bold'}}> ${depositWallet}</span>          </li>
           <li>
             <h4>ROI Amount</h4>
-            ${returnsWallet}
+           <span style={{ fontSize: '22px', fontWeight: 'bold'}}> ${returnsWallet}</span>
           </li>
           <li>
             <h4>Withdrawable Amount
               (ROI + Commission)</h4>
-            ${returnsWallet + totalCommission}
+           <span style={{ fontSize: '22px', fontWeight: 'bold'}}> ${returnsWallet + totalCommission}</span>
           </li>
         </ul>
       </div>
