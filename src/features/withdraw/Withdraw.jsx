@@ -1,163 +1,300 @@
 import React, { useState, useEffect } from "react";
-import { withdrawOtp } from "../../libs/authApi.js";
 import { useToast } from "../../store/toastStore.js";
-import AddAccountPopUp from "./AddAccountPopUp";
 import useUserStore from "../../store/userStore.js";
-
+import SideProfile from "../../components/layout/SideProfile.jsx";
+import api from "../../libs/api.js";
 
 export default function Withdraw() {
   const toast = useToast();
-  const [showAddAccountPopUp, setShowAddAccountPopUp] = useState(false);
+  const { user } = useUserStore();
+  const { returnsWallet = 0 } = user || {};
 
-  const [selectedAccount, setSelectedAccount] = useState(null);
+  // Flow state: 'form' or 'otp'
+  const [step, setStep] = useState("form");
+  const [requestId, setRequestId] = useState(null);
 
+  // Form state
+  const [formData, setFormData] = useState({
+    amount: "",
+    network: "tron",
+    walletAddress: "",
+    confirmWalletAddress: "",
+    withdrawalType: "returns",
+  });
+
+  // OTP state
+  const [otp, setOtp] = useState("");
   const [resendCountdown, setResendCountdown] = useState(0);
 
+  // Loading states
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [isResending, setIsResending] = useState(false);
 
+  // Handle form input changes
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  }
 
-  const [formData, setFormData] = useState({
-  amount: "",
-  otp: "",
-  method: "online bank transfer"  //abhi toh default hai
-});
+  // Set max amount
+  function handleMaxAmount() {
+    setFormData(prev => ({ ...prev, amount: returnsWallet.toString() }));
+  }
 
-  
-
-
-
-
-  //=====countdown timer for otp resend=====//
+  // Countdown timer for OTP resend
   useEffect(() => {
     if (resendCountdown <= 0) return;
-
     const timer = setTimeout(() => {
       setResendCountdown(prev => prev - 1);
     }, 1000);
-
     return () => clearTimeout(timer);
   }, [resendCountdown]);
 
+  // ==================== STEP 1: Create Withdrawal Request ====================
+  async function handleSubmit(e) {
+    e.preventDefault();
 
-  async function handleSendOtp() {
-    //simple gurad laga dia
-    if (resendCountdown > 0) return;
+    // Validation
+    if (!formData.amount || !formData.walletAddress || !formData.confirmWalletAddress) {
+      toast.error("Please fill all fields");
+      return;
+    }
+
+    if (formData.walletAddress !== formData.confirmWalletAddress) {
+      toast.error("Wallet addresses do not match");
+      return;
+    }
+
+    if (parseFloat(formData.amount) > returnsWallet) {
+      toast.error(`Insufficient balance. Available: ${returnsWallet}`);
+      return;
+    }
+
     try {
+      setIsSubmitting(true);
+      const response = await api.post("/api/wallet/withdraw/request", {
+        amount: parseFloat(formData.amount),
+        network: formData.network,
+        walletAddress: formData.walletAddress,
+        confirmWalletAddress: formData.confirmWalletAddress,
+        withdrawalType: formData.withdrawalType,
+      });
 
-      setResendCountdown(60);
-
-      toast.success("OTP sent successfully!");
+      if (response.data.success) {
+        setRequestId(response.data.requestId);
+        setStep("otp");
+        setResendCountdown(60);
+        toast.success(response.data.message);
+      }
     } catch (error) {
-      console.error('Error sending OTP:', error);
-      toast.error("Error sending OTP");
+      const errorMsg = error.response?.data?.error || "Failed to create withdrawal request";
+      toast.error(errorMsg);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
+  // ==================== STEP 2: Verify OTP ====================
+  async function handleVerifyOtp(e) {
+    e.preventDefault();
 
-  // const {user} = useUserStore();
-  //const {withdrwalAccounts} = user
- //async function handleSubmit(e){
-// e.preventDefault();
-// if (!formData.amount || !formData.otp || !selectedAccount) {
- // toast.error("Please fill all fields");
- // return;
-// }  const payload = {
-//    ...formData,
-//   ...selectedAccount}
-//phir api ka logic try catch then toast success or error
-//
-// }
+    if (!otp || otp.length !== 6) {
+      toast.error("Please enter a valid 6-digit OTP");
+      return;
+    }
 
+    try {
+      setIsVerifying(true);
+      const response = await api.post("/api/wallet/withdraw/verify-otp", {
+        requestId,
+        otp,
+      });
+
+      if (response.data.success) {
+        toast.success(response.data.message);
+        // Reset everything
+        setStep("form");
+        setRequestId(null);
+        setOtp("");
+        setFormData({
+          amount: "",
+          network: "tron",
+          walletAddress: "",
+          confirmWalletAddress: "",
+          withdrawalType: "returns",
+        });
+      }
+    } catch (error) {
+      const errorMsg = error.response?.data?.error || "OTP verification failed";
+      const attemptsRemaining = error.response?.data?.attemptsRemaining;
+      if (attemptsRemaining !== undefined) {
+        toast.error(`${errorMsg}. Attempts remaining: ${attemptsRemaining}`);
+      } else {
+        toast.error(errorMsg);
+      }
+    } finally {
+      setIsVerifying(false);
+    }
+  }
+
+  // ==================== Resend OTP ====================
+  async function handleResendOtp() {
+    if (resendCountdown > 0 || isResending) return;
+
+    try {
+      setIsResending(true);
+      const response = await api.post("/api/wallet/withdraw/resend-otp", {
+        requestId,
+      });
+
+      if (response.data.success) {
+        setResendCountdown(60);
+        toast.success(response.data.message);
+      }
+    } catch (error) {
+      const errorMsg = error.response?.data?.error || "Failed to resend OTP";
+      toast.error(errorMsg);
+    } finally {
+      setIsResending(false);
+    }
+  }
+
+  // ==================== Cancel and go back ====================
+  function handleCancel() {
+    setStep("form");
+    setRequestId(null);
+    setOtp("");
+    setResendCountdown(0);
+  }
 
   return (
     <div className="dashboard_right">
-
-      <div className="top_header_dash">
-        <div className="user_profile">
-          <div className="user_img"><img src="/images/user_dash_profile.svg" alt="user" height="54px" width="54px"
-            className="round_img" /></div>
-          <div className="user_profile_cnt">
-            <h3>pallavsoni64@gmail.com</h3>
-            <ul className="user_social">
-              <li><a href="#"><img src="/images/user_social.svg" alt="social" /></a></li>
-              <li><a href="#"><img src="/images/user_social2.svg" alt="social" /></a></li>
-            </ul>
-          </div>
-        </div>
-        <div className="profile_id_s">
-          <div className="profile_id">
-            <span>UID :</span>16439869<img src="/images/uid_icon.svg" className="m-1" alt="icon" />
-          </div>
-          <div className="profile_id">
-            <span>Referral ID :</span>GATB253265<img src="/images/uid_icon.svg" className="m-1" alt="icon" />
-          </div>
-          <div className="profile_id kycstatus">
-            <span>KYC Status</span><a className="text-success" href="#">KYC Verified</a>
-          </div>
-
-        </div>
-      </div>
+      <SideProfile />
 
       {/*===============================WithdrawBlock==============================*/}
-
-
-      {showAddAccountPopUp && <AddAccountPopUp setShowAddAccountPopUp={setShowAddAccountPopUp} />}
       <div className="deposit_block_das withdraw_inquery_s">
         <h2>Withdraw</h2>
         <div className="qur_code_inquery">
 
-          <form onSubmit={handleSubmit}>
-            <div className="info_input">
-              <div className="d-flex">
-                <input name="amount" value={formData.amount} onChange={handleChange} placeholder="Amount" />
-                <span>Max</span>
+          {/* ==================== STEP 1: Withdrawal Form ==================== */}
+          {step === "form" && (
+            <form onSubmit={handleSubmit}>
+
+              {/* Available Balance */}
+              <div className="info_input">
+                <label>Available Balance: <strong>{returnsWallet} USDT</strong></label>
               </div>
-            </div>
-            <div className="info_input">
-              <div className="d-flex">
-                <input name="otp" value={formData.otp} onChange={handleChange} placeholder="OTP" />
-                <span onClick={handleSendOtp} style={{ cursor: resendCountdown > 0 ? 'not-allowed' : 'pointer' }}>{`${resendCountdown > 0 ? `(${resendCountdown}s)` : 'Get OTP'}`}</span>
+
+              {/* Amount */}
+              <div className="info_input">
+                <div className="d-flex">
+                  <input
+                    name="amount"
+                    type="number"
+                    value={formData.amount}
+                    onChange={handleChange}
+                    placeholder="Amount"
+                    max={returnsWallet}
+                  />
+                  <span onClick={handleMaxAmount} style={{ cursor: "pointer" }}>Max</span>
+                </div>
               </div>
-            </div>
-            <div className="info_input">
-              <select>
-                <option>online bank transfer</option>
-              </select>
-            </div>
-            <div className="info_input">
-              {/*Simple logic yaha to change selectedaccount okay*/}
-              <select value={selectedAccount?.accountNumber || ""}
-                onChange={(e) => {
-                  const account = withdrawalAccounts.find(acc => acc.accountNumber === e.target.value);
-                  setSelectedAccount(account || null);
-                }}>
-                <option value="" disabled>Select a bank account</option>
-                {/*withdrawalAccounts.map((account, index) => (
-                    <option key={index} value={account.accountNumber}>
-                      {account.bankName} ({account.accountNumber})
-                    </option>
-                  ))*/}
-              </select>
-              <span onClick={() => setShowAddAccountPopUp(prev => !prev)}>+ Add New Account</span>
-            </div>
 
-            <div className="bankdel">
-              <label className="mb-2">bank details</label>
+              {/* Network Select */}
+              <div className="info_input">
+                <select name="network" value={formData.network} onChange={handleChange}>
+                  <option value="" disabled>Network</option>
+                  <option value="ethereum">Ethereum (ERC20)</option>
+                  <option value="bsc">BSC (BEP20)</option>
+                  <option value="tron">Tron (TRC20)</option>
+                  <option value="polygon">Polygon</option>
+                  <option value="solana">Solana</option>
+                </select>
+              </div>
 
-              <legend>Bank name <span>{selectedAccount?.bankName || "---------"}</span></legend>
-              <legend>Account Name <span>{selectedAccount?.accountHolderName || "---------"}</span></legend>
-              <legend>Account Number <span>{selectedAccount?.accountNumber || "---------"}</span></legend>
-              <legend>IFSC Code <span>{selectedAccount?.ifscCode || "---------"}</span></legend>
-            </div>
+              {/* Wallet Address */}
+              <div className="info_input">
+                <input
+                  name="walletAddress"
+                  type="text"
+                  value={formData.walletAddress}
+                  onChange={handleChange}
+                  placeholder="Wallet Address"
+                />
+              </div>
 
-            <button className="btn">Submit</button>
+              {/* Confirm Wallet Address */}
+              <div className="info_input">
+                <input
+                  name="confirmWalletAddress"
+                  type="text"
+                  value={formData.confirmWalletAddress}
+                  onChange={handleChange}
+                  placeholder="Confirm Wallet Address"
+                />
+              </div>
 
-          </form>
+              <button className="btn" type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Processing..." : "Continue"}
+              </button>
+
+            </form>
+          )}
+
+          {/* ==================== STEP 2: OTP Verification ==================== */}
+          {step === "otp" && (
+            <form onSubmit={handleVerifyOtp}>
+
+              <div className="info_input">
+                <p>OTP has been sent to your registered email/phone.</p>
+                <p><small>Request expires in 10 minutes.</small></p>
+              </div>
+
+              {/* OTP Input */}
+              <div className="info_input">
+                <div className="d-flex">
+                  <input
+                    type="text"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    placeholder="Enter 6-digit OTP"
+                    maxLength={6}
+                  />
+                  <span
+                    onClick={handleResendOtp}
+                    style={{
+                      cursor: resendCountdown > 0 ? "not-allowed" : "pointer",
+                      opacity: resendCountdown > 0 ? 0.6 : 1,
+                    }}
+                  >
+                    {isResending ? "Sending..." : resendCountdown > 0 ? `Resend (${resendCountdown}s)` : "Resend OTP"}
+                  </span>
+                </div>
+              </div>
+
+              {/* Summary */}
+              <div className="bankdel">
+                <label className="mb-2">Withdrawal Summary</label>
+                <legend>Amount <span>{formData.amount} USDT</span></legend>
+                <legend>Network <span>{formData.network.toUpperCase()}</span></legend>
+                <legend>Wallet <span>{formData.walletAddress.slice(0, 10)}...{formData.walletAddress.slice(-6)}</span></legend>
+              </div>
+
+              <div className="d-flex gap-2">
+                <button type="button" className="btn withdraw" onClick={handleCancel} disabled={isVerifying}>
+                  Cancel
+                </button>
+                <button className="btn" type="submit" disabled={isVerifying}>
+                  {isVerifying ? "Verifying..." : "Verify & Submit"}
+                </button>
+              </div>
+
+            </form>
+          )}
 
         </div>
-
       </div>
-
-
     </div>
-  )
+  );
 }

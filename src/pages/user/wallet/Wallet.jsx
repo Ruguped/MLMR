@@ -11,7 +11,7 @@ export default function Wallet() {
 
 
 
-  const { depositWallet, investmentWallet, returnsWallet, totalCommission } = user;
+  const { depositWallet, investmentWallet, returnsWallet, roiBalance,totalCommission } = user;
 
   return <div className="dashboard_right">
       <SideProfile />
@@ -24,12 +24,12 @@ export default function Wallet() {
            <span style={{ fontSize: '22px', fontWeight: 'bold'}}> ${depositWallet}</span>          </li>
           <li>
             <h4>ROI Amount</h4>
-           <span style={{ fontSize: '22px', fontWeight: 'bold'}}> ${returnsWallet}</span>
+           <span style={{ fontSize: '22px', fontWeight: 'bold'}}> ${roiBalance}</span>
           </li>
           <li>
             <h4>Withdrawable Amount
               (ROI + Commission)</h4>
-           <span style={{ fontSize: '22px', fontWeight: 'bold'}}> ${returnsWallet + totalCommission}</span>
+           <span style={{ fontSize: '22px', fontWeight: 'bold'}}> ${returnsWallet}</span>
           </li>
         </ul>
       </div>

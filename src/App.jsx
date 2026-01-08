@@ -90,7 +90,7 @@ function App() {
               <Route path="logout" />
               <Route path="settings" />
               <Route path="deposit" element={<Deposit />} />
-              <Route path="withdraw" />
+              <Route path="withdraw" element={<Withdraw />} />
               <Route path="seed/platinum" element={<SeedPlatinum />} />
               <Route path="seed/cleanup" element={<SeedCleanup />} />
               <Route path="seed/status" element={<SeedStatus />} />

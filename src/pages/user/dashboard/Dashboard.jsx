@@ -139,8 +139,8 @@ export default function Dashboard() {
                   <h4>{investmentWallet}&nbsp;USDT {/*<span>0.00000000&nbsp;BNB</span>*/} <i className="ri-eye-line mx-1" /></h4>
                 </div>
                 <div className="estimated_portfolio"><Link to="/user/deposit">
-                  <button className="deposit_btn" data-bs-toggle="modal" data-bs-target="#nextPopup">Deposit</button></Link>
-                  <button className="deposit_btn withdraw">Withdraw</button>
+                  <button className="deposit_btn" data-bs-toggle="modal" data-bs-target="#nextPopup">Deposit</button></Link><Link to="/user/withdraw">
+                  <button className="deposit_btn withdraw">Withdraw</button></Link>
                 </div>
               </li>
             </ul>
